@@ -3,23 +3,22 @@
     "landing": {
       "type": "nomore-landing",
       "settings": {
-        "rating_value": "4.66",
-        "rating_text": "Based on 1358 reviews",
+        "rating": 4.7,
+        "rating_text": "4.66 Based on 1358 reviews",
         "title": "NoMore® Colds",
-        "subtitle": "Vanquish colds and sinusitis naturally in 24-hour... a liberating, medicine-free revival!!",
+        "tagline": "Vanquish colds and sinusitis naturally in 24-hour... a liberating, medicine-free revival!!",
         "cure_heading": "WHAT CAN IT CURE?",
         "cure_image": "shopify://shop_images/nml-no_more_colds_67048029-acf2-4046-af7e-a6e219edc698.png",
         "cure_alt": "NoMore® device benefits: No More Sinusitis, No More Colds, No More Allergies, Safe with no side effects",
-        "bundles_heading": "BUY MORE - SAVE MORE",
+        "bundle_heading": "BUY MORE - SAVE MORE",
         "gifts_heading": "Free Gifts with your Order",
         "gifts_sub": "Unlock selecting a higher Bundle",
-        "locked_label": "Locked",
         "atc_label": "Add to cart",
         "guarantee": "60-DAY MONEY BACK GUARANTEE",
         "iwt_image": "shopify://shop_images/nml-immagini_prodotto_nomorecolds_4.png",
         "iwt_alt": "NoMore® Colds red light therapy device with glowing nasal adapters, offering relief from sore throat, colds, allergies, and sinusitis",
         "iwt_heading": "Are you struggling with persistent colds, sinusitis or allergies?",
-        "iwt_text": "<p>No worries!<strong> NoMore®</strong>, powered by advanced <strong>Red Light Therapy</strong>, is your<strong> quick and effective solution</strong> for <strong>colds and sinusitis relief</strong></p><p><strong>In just 10 minutes a day</strong>, it will:</p>",
+        "iwt_body": "<p>No worries!<strong> NoMore®</strong>, powered by advanced <strong>Red Light Therapy</strong>, is your<strong> quick and effective solution</strong> for <strong>colds and sinusitis relief</strong></p><p><strong>In just 10 minutes a day</strong>, it will:</p><p><strong>🎯 </strong>Target and <strong>alleviate </strong>common<strong> cold and sinusitis symptoms</strong></p><p><strong>❤️ </strong>Promote relaxation and<strong> provide relief</strong></p><p><strong>⚡️ Easy application</strong> on the nasal area</p>",
         "pct_value": 100,
         "pct_symbol": "%",
         "pct_text": "Safe solution without side-effects"
@@ -106,9 +105,9 @@
           "type": "bundle",
           "settings": {
             "title": "1 Device",
-            "save_label": "SAVE $80.10",
+            "save": "SAVE $80.10",
             "price": "$39.90",
-            "compare_price": "$120.00",
+            "compare": "$120.00",
             "badge": "",
             "badge_color": "#f32626",
             "quantity": 1,
@@ -119,9 +118,9 @@
           "type": "bundle",
           "settings": {
             "title": "2 Devices",
-            "save_label": "SAVE $180.10",
+            "save": "SAVE $180.10",
             "price": "$29.95",
-            "compare_price": "$120.00",
+            "compare": "$120.00",
             "badge": "MOST POPULAR",
             "badge_color": "#f32626",
             "quantity": 2,
@@ -132,9 +131,9 @@
           "type": "bundle",
           "settings": {
             "title": "3 Devices",
-            "save_label": "SAVE $280.10",
+            "save": "SAVE $280.10",
             "price": "$26.64",
-            "compare_price": "$120.00",
+            "compare": "$120.00",
             "badge": "BEST VALUE",
             "badge_color": "#f32626",
             "quantity": 3,
@@ -148,8 +147,8 @@
             "label": "Official NoMore App with AI",
             "free_label": "FREE",
             "value": "$20.00",
-            "locked": false,
-            "unlock_qty": 1
+            "unlock_qty": 1,
+            "locked_label": "Locked"
           }
         },
         "g2": {
@@ -159,8 +158,8 @@
             "label": "Medical-Grade Silicone Nasal Inserts",
             "free_label": "FREE",
             "value": "$10.00",
-            "locked": true,
-            "unlock_qty": 2
+            "unlock_qty": 2,
+            "locked_label": "Locked"
           }
         },
         "g3": {
@@ -170,8 +169,8 @@
             "label": "Saline Nasal Gel",
             "free_label": "FREE",
             "value": "$15.00",
-            "locked": true,
-            "unlock_qty": 3
+            "unlock_qty": 3,
+            "locked_label": "Locked"
           }
         },
         "r1": {
@@ -223,24 +222,6 @@
             "rating": 5,
             "text": "Was skeptical at first, but my husband and I tried it after spending lots on sinus meds. After one month, no more Advil! Stayed healthy even when my husband got sick. Great results!"
           }
-        },
-        "l1": {
-          "type": "bullet",
-          "settings": {
-            "text": "<p><strong>🎯 </strong>Target and <strong>alleviate </strong>common<strong> cold and sinusitis symptoms</strong></p>"
-          }
-        },
-        "l2": {
-          "type": "bullet",
-          "settings": {
-            "text": "<p><strong>❤️ </strong>Promote relaxation and<strong> provide relief</strong></p>"
-          }
-        },
-        "l3": {
-          "type": "bullet",
-          "settings": {
-            "text": "<p><strong>⚡️ Easy application</strong> on the nasal area</p>"
-          }
         }
       },
       "block_order": [
@@ -265,10 +246,7 @@
         "r2",
         "r3",
         "r4",
-        "r5",
-        "l1",
-        "l2",
-        "l3"
+        "r5"
       ]
     }
   },

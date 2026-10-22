@@ -1,323 +1,251 @@
 {%- liquid
-  assign sid = '#shopify-section-' | append: section.id
-  assign body_font = section.settings.body_font
-  assign body_bold = body_font | font_modify: 'weight', 'bold'
-  assign body_black = body_font | font_modify: 'weight', '900'
-  assign body_medium = body_font | font_modify: 'weight', '500'
-  assign head_font = section.settings.heading_font
-  assign default_qty = 1
+  assign sel_qty = 1
   for block in section.blocks
     if block.type == 'bundle' and block.settings.selected
-      assign default_qty = block.settings.quantity
+      assign sel_qty = block.settings.quantity
     endif
   endfor
+  assign body_font_b = section.settings.body_font | font_modify: 'weight', 'bold'
+  assign body_font_m = section.settings.body_font | font_modify: 'weight', '500'
+  assign body_font_k = section.settings.body_font | font_modify: 'weight', '900'
 -%}
-<style>
-  {{ body_font | font_face: font_display: 'swap' }}
-  {% if body_bold %}{{ body_bold | font_face: font_display: 'swap' }}{% endif %}
-  {% if body_black %}{{ body_black | font_face: font_display: 'swap' }}{% endif %}
-  {% if body_medium %}{{ body_medium | font_face: font_display: 'swap' }}{% endif %}
-  {{ head_font | font_face: font_display: 'swap' }}
-
-  {{ sid }} .nm{--accent:{{ section.settings.accent }};--text:{{ section.settings.text_color }};--bg:{{ section.settings.bg }};--sel-bg:{{ section.settings.selected_bg }};font-family:{{ body_font.family }},{{ body_font.fallback_families }};color:var(--text);background:var(--bg);letter-spacing:.6px;}
-  {{ sid }} .nm *{box-sizing:border-box;}
-  {{ sid }} .nm-col{max-width:600px;margin:0 auto;}
-  {{ sid }} .nm-main{background:var(--bg);padding-bottom:15px;}
-  {{ sid }} .nm-slider{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;background:#fff;}
-  {{ sid }} .nm-slider::-webkit-scrollbar{display:none;}
-  {{ sid }} .nm-slide{flex:0 0 100%;scroll-snap-align:start;aspect-ratio:1/1;background:#fff;}
-  {{ sid }} .nm-slide img{width:100%;height:100%;object-fit:contain;display:block;}
-  {{ sid }} .nm-dots{display:flex;justify-content:center;gap:8px;padding:24px 0 0;height:56px;}
-  {{ sid }} .nm-dot{width:8px;height:8px;border-radius:50%;border:1px solid #999;background:transparent;padding:0;cursor:pointer;transition:transform .2s;}
-  {{ sid }} .nm-dot.is-active{background:#000;border-color:#000;}
-  {{ sid }} .nm-info{padding:5px 15px 0;}
-  {{ sid }} .nm-rating{display:flex;align-items:center;gap:3px;font-size:15px;line-height:21px;color:rgba(0,0,0,.75);}
-  {{ sid }} .nm-stars{position:relative;display:inline-flex;}
-  {{ sid }} .nm-stars svg{width:16px;height:16px;margin-right:3px;flex:none;}
-  {{ sid }} .nm-stars__fill{position:absolute;inset:0 auto 0 0;overflow:hidden;display:flex;white-space:nowrap;}
-  {{ sid }} .nm-stars__bg svg{fill:#dcdcdc;}
-  {{ sid }} .nm-stars__fill svg{fill:var(--star);}
-  {{ sid }} .nm-title{font-family:{{ head_font.family }},{{ head_font.fallback_families }};font-weight:{{ head_font.weight }};font-size:30px;line-height:39px;margin:15px 0 5px;color:#000;}
-  {{ sid }} .nm-sub{font-size:14px;font-weight:700;line-height:22.4px;margin:0;color:#000;letter-spacing:0;}
-  {{ sid }} .nm-cure{font-size:17px;font-weight:700;line-height:30.6px;text-align:center;margin:8px 0 4px;color:#000;}
-  {{ sid }} .nm-cure-img img{width:100%;height:auto;display:block;}
-  {{ sid }} .nm-divider{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700;line-height:19.6px;margin:20px 0 15px;color:#000;}
-  {{ sid }} .nm-divider::before,{{ sid }} .nm-divider::after{content:"";flex:1;height:2px;background:rgba(0,0,0,.2);}
-  {{ sid }} .nm-bundles{display:flex;flex-direction:column;gap:10px;}
-  {{ sid }} .nm-bundle{position:relative;display:flex;align-items:center;gap:18px;padding:13px 20px;min-height:75px;border-radius:8px;background:rgba(255,255,255,.573);box-shadow:rgba(0,0,0,.3) 0 0 0 1px inset;cursor:pointer;}
-  {{ sid }} .nm-bundle.has-badge{min-height:89px;padding-top:20px;}
-  {{ sid }} .nm-bundle.is-selected{background:var(--sel-bg);box-shadow:#000 0 0 0 2px inset;}
-  {{ sid }} .nm-bundle input{position:absolute;opacity:0;pointer-events:none;}
-  {{ sid }} .nm-radio{flex:none;width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid #fff;box-shadow:rgba(0,0,0,.3) 0 0 0 2px;}
-  {{ sid }} .nm-bundle.is-selected .nm-radio{background:#000;box-shadow:#000 0 0 0 2px;}
-  {{ sid }} .nm-bundle__main{flex:1;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-  {{ sid }} .nm-bundle__title{font-size:20px;font-weight:700;line-height:28px;letter-spacing:0;color:#000;}
-  {{ sid }} .nm-save{display:inline-block;padding:4px 8px;border-radius:8px;font-size:12px;font-weight:700;font-style:italic;line-height:16.8px;letter-spacing:0;}
-  {{ sid }} .nm-bundle__prices{text-align:right;}
-  {{ sid }} .nm-price{font-size:20px;font-weight:700;line-height:28px;letter-spacing:0;color:#000;}
-  {{ sid }} .nm-compare{font-size:14px;line-height:19.6px;color:{{ section.settings.compare_color }};text-decoration:line-through;letter-spacing:0;}
-  {{ sid }} .nm-badge{position:absolute;top:-8px;right:16px;padding:6px 8px;font-family:sans-serif;font-size:12px;font-weight:700;line-height:12px;color:#fff;border-radius:0 0 5px 5px;letter-spacing:0;}
-  {{ sid }} .nm-gifts-h{text-align:center;margin:17px 0 14px;}
-  {{ sid }} .nm-gifts-h b{display:block;font-size:20px;font-weight:900;line-height:24px;color:#000;}
-  {{ sid }} .nm-gifts-h span{display:block;font-size:16px;line-height:22.4px;color:#000;margin-top:2px;}
-  {{ sid }} .nm-gifts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding-top:8px;}
-  {{ sid }} .nm-gift{position:relative;min-height:204px;border-radius:8px;padding:14px 10px 10px;text-align:center;background:var(--sel-bg);box-shadow:#000 0 0 0 2px inset;}
-  {{ sid }} .nm-gift.is-locked{background:rgba(255,255,255,.573);box-shadow:rgba(0,0,0,.3) 0 0 0 1px inset;}
-  {{ sid }} .nm-gift__tag{position:absolute;top:-8px;left:50%;transform:translateX(-50%);display:flex;gap:6px;align-items:center;white-space:nowrap;height:28px;padding:0 8px;background:#000;color:#fff;border-radius:8px;font-size:12px;font-weight:450;line-height:12px;}
-  {{ sid }} .nm-gift__tag s{text-decoration:line-through;}
-  {{ sid }} .nm-gift__img{width:100%;aspect-ratio:1/1;}
-  {{ sid }} .nm-gift__img img{width:100%;height:100%;object-fit:contain;display:block;}
-  {{ sid }} .nm-gift__label{display:block;margin-top:9px;font-size:14px;font-weight:500;line-height:19.6px;color:#000;}
-  {{ sid }} .nm-gift__lock{display:none;}
-  {{ sid }} .nm-gift.is-locked .nm-gift__open{display:none;}
-  {{ sid }} .nm-gift.is-locked .nm-gift__lock{display:block;}
-  {{ sid }} .nm-gift__lock svg{width:100%;height:100px;display:block;}
-  {{ sid }} .nm-gift__lock div{margin-top:6px;font-size:14px;font-weight:500;line-height:19.6px;color:#555;}
-  {{ sid }} .nm-gift.is-unlocking .nm-gift__open{animation:nmUnlock .5s ease;}
-  @keyframes nmUnlock{from{opacity:0;transform:scale(.8);}to{opacity:1;transform:none;}}
-  {{ sid }} .nm-atc{display:block;width:100%;height:47px;margin-top:26px;border:0;border-radius:8px;cursor:pointer;color:#fff;font-family:inherit;font-size:21px;font-weight:700;letter-spacing:1px;background:radial-gradient(ellipse at center,{{ section.settings.btn_start }} 0%,{{ section.settings.btn_end }} 75%);box-shadow:{{ section.settings.btn_shadow }} 0 3px 0 0,rgba(0,0,0,.5) 0 5px 10px 0;transition:filter .2s,transform .2s;}
-  {{ sid }} .nm-atc:hover{filter:brightness(1.08);}
-  {{ sid }} .nm-atc:active{transform:translateY(2px);}
-  {{ sid }} .nm-guarantee{display:flex;justify-content:center;align-items:center;gap:8px;margin:16px 0 0;font-size:14px;font-weight:700;line-height:25.2px;color:rgba(0,0,0,.75);}
-  {{ sid }} .nm-guarantee svg{width:15px;height:15px;flex:none;}
-  {{ sid }} .nm-reviews{position:relative;margin-top:17px;padding:10px 12px;}
-  {{ sid }} .nm-rv-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;}
-  {{ sid }} .nm-rv-track::-webkit-scrollbar{display:none;}
-  {{ sid }} .nm-rv{flex:0 0 100%;scroll-snap-align:start;display:flex;gap:12px;padding:8px 20px 8px 8px;background:#fff;border-radius:8px;min-height:115px;}
-  {{ sid }} .nm-rv__img{flex:none;width:56px;height:74px;margin-top:12px;border-radius:8px;overflow:hidden;background:#ddd;}
-  {{ sid }} .nm-rv__img img{width:100%;height:100%;object-fit:cover;display:block;}
-  {{ sid }} .nm-rv__head{display:flex;align-items:center;gap:5px;}
-  {{ sid }} .nm-rv__name{font-size:13px;font-weight:700;line-height:16.9px;color:#000;}
-  {{ sid }} .nm-rv__stars{display:inline-flex;gap:1px;}
-  {{ sid }} .nm-rv__stars svg{width:12px;height:12px;fill:#000;}
-  {{ sid }} .nm-rv__text{margin:4px 0 0;font-size:12px;line-height:15.6px;color:#000;}
-  {{ sid }} .nm-rv-arrow{position:absolute;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:50%;border:0;padding:4px;background:#f3f3f3;box-shadow:rgba(0,0,0,.08) 0 -2px 12px 0;cursor:pointer;display:flex;}
-  {{ sid }} .nm-rv-arrow svg{width:16px;height:16px;}
-  {{ sid }} .nm-rv-prev{left:4px;}
-  {{ sid }} .nm-rv-next{right:4px;}
-  {{ sid }} .nm-iwt{background:{{ section.settings.iwt_bg }};padding-bottom:40px;}
-  {{ sid }} .nm-iwt__img img{width:100%;height:auto;aspect-ratio:1/1;object-fit:cover;display:block;}
-  {{ sid }} .nm-iwt__body{padding:40px 32px 0;}
-  {{ sid }} .nm-iwt__h{font-family:{{ head_font.family }},{{ head_font.fallback_families }};font-weight:{{ head_font.weight }};font-size:27.5px;line-height:35.75px;margin:0 0 20px;background:linear-gradient(127deg,{{ section.settings.grad_start }} 21%,{{ section.settings.grad_end }} 81%);-webkit-background-clip:text;background-clip:text;color:transparent;}
-  {{ sid }} .nm-iwt__txt p{margin:0 0 10px;font-size:15px;line-height:27px;color:#000;}
-  {{ sid }} .nm-pct{background:{{ section.settings.pct_bg }};padding:60px 16px;text-align:center;}
-  {{ sid }} .nm-pct__num{display:flex;justify-content:center;gap:13px;font-size:60px;font-weight:900;line-height:60px;letter-spacing:-1.2px;}
-  {{ sid }} .nm-pct__num span{background:linear-gradient(127deg,{{ section.settings.grad_start }} 21%,{{ section.settings.grad_end }} 81%);-webkit-background-clip:text;background-clip:text;color:transparent;}
-  {{ sid }} .nm-pct__txt{margin:24px 0 0;font-size:18px;font-weight:700;line-height:32.4px;color:#000;}
-  {{ sid }} .nm-reveal{opacity:0;transform:translateY(30px);transition:opacity .8s ease,transform .8s ease;}
-  {{ sid }} .nm-reveal.is-in{opacity:1;transform:none;}
-  @media (prefers-reduced-motion: reduce){
-    {{ sid }} .nm-reveal{opacity:1;transform:none;transition:none;}
-    {{ sid }} .nm-slider,{{ sid }} .nm-rv-track{scroll-behavior:auto;}
-    {{ sid }} .nm-gift.is-unlocking .nm-gift__open{animation:none;}
+{% style %}
+  {{ section.settings.body_font | font_face: font_display: 'swap' }}
+  {{ body_font_b | font_face: font_display: 'swap' }}
+  {{ body_font_m | font_face: font_display: 'swap' }}
+  {{ body_font_k | font_face: font_display: 'swap' }}
+  {{ section.settings.heading_font | font_face: font_display: 'swap' }}
+  #shopify-section-{{ section.id }} { --accent: {{ section.settings.accent }}; --text: {{ section.settings.text_color }}; --bg: {{ section.settings.bg }}; --g1: {{ section.settings.grad_start }}; --g2: {{ section.settings.grad_end }}; background: var(--bg); }
+  #shopify-section-{{ section.id }} .nml { max-width: 500px; margin: 0 auto; font-family: {{ section.settings.body_font.family }}, {{ section.settings.body_font.fallback_families }}; color: var(--text); letter-spacing: .6px; overflow: hidden; }
+  #shopify-section-{{ section.id }} .nml *, #shopify-section-{{ section.id }} .nml *::before { box-sizing: border-box; }
+  #shopify-section-{{ section.id }} .nml img { display: block; max-width: 100%; height: auto; }
+  #shopify-section-{{ section.id }} .nml-slider { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; background: #fff; }
+  #shopify-section-{{ section.id }} .nml-slider::-webkit-scrollbar { display: none; }
+  #shopify-section-{{ section.id }} .nml-slide { flex: 0 0 100%; scroll-snap-align: start; aspect-ratio: 1; }
+  #shopify-section-{{ section.id }} .nml-slide img { width: 100%; height: 100%; object-fit: contain; }
+  #shopify-section-{{ section.id }} .nml-dots { display: flex; justify-content: center; gap: 6px; padding: 14px 0 0; }
+  #shopify-section-{{ section.id }} .nml-dot { width: 9px; height: 9px; border-radius: 50%; border: 1px solid #9a9a9a; background: transparent; padding: 0; cursor: pointer; transition: transform .2s; }
+  #shopify-section-{{ section.id }} .nml-dot.is-active { background: #000; border-color: #000; }
+  #shopify-section-{{ section.id }} .nml-info { padding: 36px 15px 20px; }
+  #shopify-section-{{ section.id }} .nml-rating { display: flex; align-items: center; gap: 12px; font-size: 15px; line-height: 21px; color: rgba(0,0,0,.75); }
+  #shopify-section-{{ section.id }} .nml-stars { position: relative; display: inline-flex; line-height: 0; }
+  #shopify-section-{{ section.id }} .nml-stars__fill { position: absolute; inset: 0; overflow: hidden; display: flex; white-space: nowrap; }
+  #shopify-section-{{ section.id }} .nml-stars svg { flex: 0 0 auto; }
+  #shopify-section-{{ section.id }} .nml-title { font-family: {{ section.settings.heading_font.family }}, {{ section.settings.heading_font.fallback_families }}; font-weight: 700; font-size: 30px; line-height: 39px; margin: 14px 0 5px; color: #000; }
+  #shopify-section-{{ section.id }} .nml-tagline { font-weight: 700; font-size: 14px; line-height: 22.4px; margin: 0; letter-spacing: 0; color: #000; }
+  #shopify-section-{{ section.id }} .nml-cure { text-align: center; font-weight: 700; font-size: 17px; line-height: 30.6px; margin: 8px 0 4px; color: #000; }
+  #shopify-section-{{ section.id }} .nml-divider { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; line-height: 19.6px; margin: 20px 0 15px; color: #000; white-space: nowrap; }
+  #shopify-section-{{ section.id }} .nml-divider::before, #shopify-section-{{ section.id }} .nml-divider::after { content: ""; flex: 1; height: 2px; background: rgba(0,0,0,.2); }
+  #shopify-section-{{ section.id }} .nml-bundles { display: grid; gap: 10px; }
+  #shopify-section-{{ section.id }} .nml-bundle { position: relative; display: flex; align-items: center; gap: 18px; padding: 14px 20px; min-height: 75px; border-radius: 8px; background: rgba(255,255,255,.573); box-shadow: inset 0 0 0 1px rgba(0,0,0,.3); cursor: pointer; text-align: left; border: 0; width: 100%; font: inherit; color: inherit; }
+  #shopify-section-{{ section.id }} .nml-bundle--badge { min-height: 89px; margin-top: 8px; }
+  #shopify-section-{{ section.id }} .nml-bundle.is-selected { background: {{ section.settings.selected_bg }}; box-shadow: inset 0 0 0 2px #000; }
+  #shopify-section-{{ section.id }} .nml-radio { flex: 0 0 20px; height: 20px; border-radius: 50%; background: #fff; border: 3px solid #fff; box-shadow: 0 0 0 2px rgba(0,0,0,.3); }
+  #shopify-section-{{ section.id }} .is-selected .nml-radio { background: #000; box-shadow: 0 0 0 2px #000; }
+  #shopify-section-{{ section.id }} .nml-bundle__name { font-weight: 700; font-size: 20px; line-height: 28px; letter-spacing: 0; color: #000; }
+  #shopify-section-{{ section.id }} .nml-save { display: inline-block; margin-left: 8px; padding: 4px 8px; border-radius: 8px; background: {{ section.settings.save_bg }}; color: #fff; font-size: 12px; line-height: 16.8px; font-weight: 700; font-style: italic; letter-spacing: 0; vertical-align: middle; }
+  #shopify-section-{{ section.id }} .nml-bundle__left { flex: 1; display: flex; align-items: center; flex-wrap: wrap; }
+  #shopify-section-{{ section.id }} .nml-bundle__prices { text-align: right; }
+  #shopify-section-{{ section.id }} .nml-price { font-weight: 700; font-size: 20px; line-height: 28px; letter-spacing: 0; color: #000; }
+  #shopify-section-{{ section.id }} .nml-compare { font-size: 14px; line-height: 19.6px; color: {{ section.settings.compare_color }}; text-decoration: line-through; letter-spacing: 0; }
+  #shopify-section-{{ section.id }} .nml-badge { position: absolute; top: -8px; right: 16px; padding: 6px 8px; color: #fff; font: 700 12px/12px sans-serif; border-radius: 0 0 5px 5px; }
+  #shopify-section-{{ section.id }} .nml-gifts-h { text-align: center; margin: 17px 0 6px; }
+  #shopify-section-{{ section.id }} .nml-gifts-h b { display: block; font-weight: 900; font-size: 20px; line-height: 24px; }
+  #shopify-section-{{ section.id }} .nml-gifts-h span { font-size: 16px; line-height: 22.4px; }
+  #shopify-section-{{ section.id }} .nml-gifts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding-top: 8px; }
+  #shopify-section-{{ section.id }} .nml-gift { position: relative; min-height: 204px; border-radius: 8px; padding: 14px 10px 10px; text-align: center; background: rgba(255,255,255,.573); box-shadow: inset 0 0 0 1px rgba(0,0,0,.3); }
+  #shopify-section-{{ section.id }} .nml-gift.is-unlocked { background: {{ section.settings.selected_bg }}; box-shadow: inset 0 0 0 2px #000; }
+  #shopify-section-{{ section.id }} .nml-gift__tag { position: absolute; top: -8px; left: 50%; transform: translateX(-50%); background: #000; color: #fff; border-radius: 8px; padding: 8px 8px; font-size: 12px; line-height: 12px; font-weight: 450; white-space: nowrap; }
+  #shopify-section-{{ section.id }} .nml-gift__tag s { margin-left: 4px; }
+  #shopify-section-{{ section.id }} .nml-gift__img { width: 100%; aspect-ratio: 1; object-fit: contain; }
+  #shopify-section-{{ section.id }} .nml-gift__title { display: block; margin-top: 9px; font-weight: 500; font-size: 14px; line-height: 19.6px; }
+  #shopify-section-{{ section.id }} .nml-gift__lock { display: none; padding-top: 0; color: #555; font-weight: 500; font-size: 14px; line-height: 19.6px; }
+  #shopify-section-{{ section.id }} .nml-gift__lock svg { display: block; margin: 0 auto 6px; width: 93px; height: 100px; }
+  #shopify-section-{{ section.id }} .nml-gift:not(.is-unlocked) .nml-gift__lock { display: block; }
+  #shopify-section-{{ section.id }} .nml-gift:not(.is-unlocked) .nml-gift__body { display: none; }
+  #shopify-section-{{ section.id }} .is-unlocked .nml-gift__body { animation: nmlUnlock .5s ease; }
+  @keyframes nmlUnlock { from { opacity: 0; transform: scale(.85); } to { opacity: 1; transform: none; } }
+  #shopify-section-{{ section.id }} .nml-atc { display: block; width: 100%; margin-top: 26px; height: 47px; border: 0; border-radius: 8px; cursor: pointer; color: #fff; font: 700 21px/25.2px {{ section.settings.body_font.family }}, sans-serif; letter-spacing: 1px; background: radial-gradient(ellipse at center, {{ section.settings.btn_start }} 0%, {{ section.settings.btn_end }} 75%); box-shadow: 0 3px 0 0 {{ section.settings.btn_shadow }}, 0 5px 10px 0 rgba(0,0,0,.5); transition: filter .2s, transform .2s; }
+  #shopify-section-{{ section.id }} .nml-atc:hover { filter: brightness(1.08); }
+  #shopify-section-{{ section.id }} .nml-atc:active { transform: translateY(2px); }
+  #shopify-section-{{ section.id }} .nml-guarantee { display: flex; align-items: center; justify-content: center; gap: 9px; margin: 18px 0 0; font-weight: 700; font-size: 14px; line-height: 25.2px; color: rgba(0,0,0,.75); }
+  #shopify-section-{{ section.id }} .nml-reviews { position: relative; margin-top: 20px; padding: 10px 12px; }
+  #shopify-section-{{ section.id }} .nml-rtrack { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; border-radius: 8px; }
+  #shopify-section-{{ section.id }} .nml-rtrack::-webkit-scrollbar { display: none; }
+  #shopify-section-{{ section.id }} .nml-review { flex: 0 0 100%; scroll-snap-align: start; display: flex; gap: 12px; align-items: center; background: #fff; border-radius: 8px; padding: 8px 8px 8px 8px; min-height: 115px; }
+  #shopify-section-{{ section.id }} .nml-review__img { flex: 0 0 56px; width: 56px; height: 74px; border-radius: 8px; background: #ddd; object-fit: cover; }
+  #shopify-section-{{ section.id }} .nml-review__head { display: flex; align-items: center; gap: 5px; }
+  #shopify-section-{{ section.id }} .nml-review__name { font-weight: 700; font-size: 13px; line-height: 16.9px; }
+  #shopify-section-{{ section.id }} .nml-review p { margin: 4px 0 0; font-size: 12px; line-height: 15.6px; }
+  #shopify-section-{{ section.id }} .nml-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; border-radius: 50%; border: 0; padding: 4px; background: #f3f3f3; box-shadow: 0 -2px 12px rgba(0,0,0,.08); cursor: pointer; line-height: 0; }
+  #shopify-section-{{ section.id }} .nml-arrow--prev { left: 4px; }
+  #shopify-section-{{ section.id }} .nml-arrow--next { right: 4px; }
+  #shopify-section-{{ section.id }} .nml-iwt { padding-bottom: 40px; }
+  #shopify-section-{{ section.id }} .nml-iwt__img { width: 100%; aspect-ratio: 1; object-fit: cover; }
+  #shopify-section-{{ section.id }} .nml-iwt__text { padding: 40px 32px 0; }
+  #shopify-section-{{ section.id }} .nml-iwt h2 { margin: 0 0 20px; font-family: {{ section.settings.heading_font.family }}, {{ section.settings.heading_font.fallback_families }}; font-weight: 700; font-size: 27.5px; line-height: 35.75px; letter-spacing: .6px; padding-right: 12px; background: linear-gradient(127deg, var(--g1) 21%, var(--g2) 81%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  #shopify-section-{{ section.id }} .nml-iwt__body { font-size: 15px; line-height: 27px; color: #000; }
+  #shopify-section-{{ section.id }} .nml-iwt__body p { margin: 0 0 10px; }
+  #shopify-section-{{ section.id }} .nml-iwt__body strong { font-weight: 700; }
+  #shopify-section-{{ section.id }} .nml-pct { background: {{ section.settings.pct_bg }}; padding: 60px 16px; text-align: center; margin: 0 calc(50% - 50vw); }
+  #shopify-section-{{ section.id }} .nml-pct__num { display: flex; justify-content: center; gap: 13px; font-weight: 900; font-size: 60px; line-height: 60px; letter-spacing: -1.2px; }
+  #shopify-section-{{ section.id }} .nml-pct__num span { background: linear-gradient(127deg, var(--g1) 21%, var(--g2) 81%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  #shopify-section-{{ section.id }} .nml-pct p { margin: 24px 0 0; font-weight: 700; font-size: 18px; line-height: 32.4px; color: #000; }
+  #shopify-section-{{ section.id }} .nml-reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
+  #shopify-section-{{ section.id }} .nml-reveal.is-in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    #shopify-section-{{ section.id }} .nml-reveal { opacity: 1; transform: none; transition: none; }
+    #shopify-section-{{ section.id }} .nml-slider, #shopify-section-{{ section.id }} .nml-rtrack { scroll-behavior: auto; }
+    #shopify-section-{{ section.id }} .is-unlocked .nml-gift__body { animation: none; }
   }
-</style>
+{% endstyle %}
 
-<div class="nm" data-nm-root>
-  <div class="nm-main">
-    <div class="nm-col">
-      <div class="nm-slider" data-nm-slider>
-        {%- assign slide_i = 0 -%}
-        {%- for block in section.blocks -%}
-          {%- if block.type == 'slide' -%}
-            <div class="nm-slide" {{ block.shopify_attributes }}>
-              {%- if block.settings.image != blank -%}
-                {%- if slide_i == 0 -%}
-                  {{ block.settings.image | image_url: width: 1170 | image_tag: widths: '390,600,780,1170', sizes: '(min-width: 600px) 600px, 100vw', alt: block.settings.alt, loading: 'eager', fetchpriority: 'high' }}
-                {%- else -%}
-                  {{ block.settings.image | image_url: width: 1170 | image_tag: widths: '390,600,780,1170', sizes: '(min-width: 600px) 600px, 100vw', alt: block.settings.alt, loading: 'lazy' }}
-                {%- endif -%}
+{%- capture star -%}<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2l2.9 6.9 7.1.6-5.4 4.7 1.6 7.3L12 17.8 5.8 21.5l1.6-7.3L2 9.5l7.1-.6z"/></svg>{%- endcapture -%}
+
+<div class="nml" data-nml>
+  <div class="nml-hero">
+    <div class="nml-slider" data-slider>
+      {%- assign si = 0 -%}
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'slide' -%}
+          <div class="nml-slide" {{ block.shopify_attributes }}>
+            {%- if block.settings.image != blank -%}
+              {%- if si == 0 -%}
+                {{ block.settings.image | image_url: width: 1100 | image_tag: widths: '390,600,780,1100', sizes: '(min-width: 520px) 500px, 100vw', alt: block.settings.alt, loading: 'eager', fetchpriority: 'high' }}
+              {%- else -%}
+                {{ block.settings.image | image_url: width: 1100 | image_tag: widths: '390,600,780,1100', sizes: '(min-width: 520px) 500px, 100vw', alt: block.settings.alt, loading: 'lazy' }}
               {%- endif -%}
-            </div>
-            {%- assign slide_i = slide_i | plus: 1 -%}
+            {%- endif -%}
+          </div>
+          {%- assign si = si | plus: 1 -%}
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+    <div class="nml-dots" data-dots>
+      {%- for i in (1..si) -%}<button type="button" class="nml-dot{% if forloop.first %} is-active{% endif %}" aria-label="{{ section.settings.dot_label }} {{ i }}"></button>{%- endfor -%}
+    </div>
+  </div>
+
+  <div class="nml-info nml-reveal">
+    <div class="nml-rating">
+      {%- assign pct = section.settings.rating | times: 20 -%}
+      <span class="nml-stars" style="color:#d0d0d0">
+        {%- for i in (1..5) -%}{{ star }}{%- endfor -%}
+        <span class="nml-stars__fill" style="width:{{ pct }}%;color:{{ section.settings.star_color }}">{%- for i in (1..5) -%}{{ star }}{%- endfor -%}</span>
+      </span>
+      <span>{{ section.settings.rating_text }}</span>
+    </div>
+    <h1 class="nml-title">{{ section.settings.title }}</h1>
+    <p class="nml-tagline">{{ section.settings.tagline }}</p>
+    {%- if section.settings.cure_heading != blank -%}<div class="nml-cure">{{ section.settings.cure_heading }}</div>{%- endif -%}
+    {%- if section.settings.cure_image != blank -%}
+      {{ section.settings.cure_image | image_url: width: 1000 | image_tag: widths: '360,720,1000', sizes: '(min-width: 520px) 470px, calc(100vw - 30px)', alt: section.settings.cure_alt, loading: 'lazy' }}
+    {%- endif -%}
+
+    <div class="nml-divider">{{ section.settings.bundle_heading }}</div>
+    {%- form 'product', product, data-nml-form: '' -%}
+      <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+      <input type="hidden" name="quantity" value="{{ sel_qty }}" data-qty>
+      <div class="nml-bundles" role="radiogroup">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'bundle' -%}
+            <button type="button" role="radio" aria-checked="{{ block.settings.selected }}" class="nml-bundle{% if block.settings.selected %} is-selected{% endif %}{% if block.settings.badge != blank %} nml-bundle--badge{% endif %}" data-bundle data-qty-val="{{ block.settings.quantity }}" {{ block.shopify_attributes }}>
+              {%- if block.settings.badge != blank -%}<span class="nml-badge" style="background:{{ block.settings.badge_color }}">{{ block.settings.badge }}</span>{%- endif -%}
+              <span class="nml-radio"></span>
+              <span class="nml-bundle__left"><span class="nml-bundle__name">{{ block.settings.title }}</span>{%- if block.settings.save != blank -%}<span class="nml-save">{{ block.settings.save }}</span>{%- endif -%}</span>
+              <span class="nml-bundle__prices"><span class="nml-price" style="display:block">{{ block.settings.price }}</span>{%- if block.settings.compare != blank -%}<span class="nml-compare" style="display:block">{{ block.settings.compare }}</span>{%- endif -%}</span>
+            </button>
           {%- endif -%}
         {%- endfor -%}
       </div>
-      <div class="nm-dots">
-        {%- for i in (1..slide_i) -%}
-          <button type="button" class="nm-dot{% if forloop.first %} is-active{% endif %}" data-nm-dot="{{ forloop.index0 }}" aria-label="{{ section.settings.dot_label }} {{ i }}"></button>
+
+      <div class="nml-gifts-h"><b>{{ section.settings.gifts_heading }}</b><span>{{ section.settings.gifts_sub }}</span></div>
+      <div class="nml-gifts">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'gift' -%}
+            <div class="nml-gift{% if sel_qty >= block.settings.unlock_qty %} is-unlocked{% endif %}" data-gift data-unlock="{{ block.settings.unlock_qty }}" {{ block.shopify_attributes }}>
+              <span class="nml-gift__tag">{{ block.settings.free_label }}<s>{{ block.settings.value }}</s></span>
+              <div class="nml-gift__body">
+                {%- if block.settings.image != blank -%}
+                  {{ block.settings.image | image_url: width: 300 | image_tag: widths: '100,200,300', sizes: '100px', alt: block.settings.label, loading: 'lazy', class: 'nml-gift__img' }}
+                {%- endif -%}
+                <span class="nml-gift__title">{{ block.settings.label }}</span>
+              </div>
+              <div class="nml-gift__lock">
+                <svg viewBox="0 0 93 100" fill="none" aria-hidden="true"><rect x="27" y="44" width="39" height="34" rx="5" fill="#555"/><path d="M34 44V34a12.5 12.5 0 0 1 25 0v10" stroke="#555" stroke-width="6" fill="none"/><circle cx="46.5" cy="59" r="4" fill="#fff"/><rect x="45" y="60" width="3" height="8" fill="#fff"/></svg>
+                {{ block.settings.locked_label }}
+              </div>
+            </div>
+          {%- endif -%}
         {%- endfor -%}
       </div>
 
-      <div class="nm-info">
-        {%- assign rating_pct = section.settings.rating_value | times: 20.0 -%}
-        <div class="nm-rating">
-          <span class="nm-stars" style="--star:{{ section.settings.star_color }}">
-            <span class="nm-stars__bg" style="display:inline-flex">{% for i in (1..5) %}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.1 6.6 7.2.9-5.3 5 1.4 7.1L12 18.1 5.6 21.6 7 14.5 1.7 9.5l7.2-.9z"/></svg>{% endfor %}</span>
-            <span class="nm-stars__fill" style="width:{{ rating_pct }}%">{% for i in (1..5) %}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.1 6.6 7.2.9-5.3 5 1.4 7.1L12 18.1 5.6 21.6 7 14.5 1.7 9.5l7.2-.9z"/></svg>{% endfor %}</span>
-          </span>
-          <span>{{ section.settings.rating_value }} {{ section.settings.rating_text }}</span>
-        </div>
-        <h1 class="nm-title">{{ section.settings.title }}</h1>
-        <p class="nm-sub">{{ section.settings.subtitle }}</p>
-        {%- if section.settings.cure_heading != blank -%}<div class="nm-cure">{{ section.settings.cure_heading }}</div>{%- endif -%}
-        {%- if section.settings.cure_image != blank -%}
-          <div class="nm-cure-img">{{ section.settings.cure_image | image_url: width: 1080 | image_tag: widths: '360,720,1080', sizes: '(min-width: 600px) 570px, calc(100vw - 30px)', alt: section.settings.cure_alt, loading: 'lazy' }}</div>
-        {%- endif -%}
+      <button type="submit" name="add" class="nml-atc"{% unless product.selected_or_first_available_variant.available %} disabled{% endunless %}>{{ section.settings.atc_label }}</button>
+    {%- endform -%}
+    <div class="nml-guarantee">
+      <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="{{ section.settings.accent }}"/><path d="M6.5 12.5l3.5 3.5 7.5-8" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>{{ section.settings.guarantee }}</span>
+    </div>
 
-        {%- form 'product', product, data-nm-form: '' -%}
-          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-          <input type="hidden" name="quantity" value="{{ default_qty }}" data-nm-qty>
-          <div class="nm-divider">{{ section.settings.bundles_heading }}</div>
-          <div class="nm-bundles" role="radiogroup">
-            {%- for block in section.blocks -%}
-              {%- if block.type == 'bundle' -%}
-                <label class="nm-bundle{% if block.settings.badge != blank %} has-badge{% endif %}{% if block.settings.selected %} is-selected{% endif %}" data-nm-bundle data-qty="{{ block.settings.quantity }}" {{ block.shopify_attributes }}>
-                  <input type="radio" name="nm-bundle-{{ section.id }}" value="{{ block.settings.quantity }}"{% if block.settings.selected %} checked{% endif %}>
-                  {%- if block.settings.badge != blank -%}<span class="nm-badge" style="background:{{ block.settings.badge_color }}">{{ block.settings.badge }}</span>{%- endif -%}
-                  <span class="nm-radio"></span>
-                  <span class="nm-bundle__main">
-                    <span class="nm-bundle__title">{{ block.settings.title }}</span>
-                    {%- if block.settings.save_label != blank -%}<span class="nm-save" style="background:{{ section.settings.save_bg }};color:{{ section.settings.save_text }}">{{ block.settings.save_label }}</span>{%- endif -%}
-                  </span>
-                  <span class="nm-bundle__prices">
-                    <div class="nm-price">{{ block.settings.price }}</div>
-                    {%- if block.settings.compare_price != blank -%}<div class="nm-compare">{{ block.settings.compare_price }}</div>{%- endif -%}
-                  </span>
-                </label>
+    <div class="nml-reviews">
+      <div class="nml-rtrack" data-rtrack>
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'review' -%}
+            <div class="nml-review" {{ block.shopify_attributes }}>
+              {%- if block.settings.image != blank -%}
+                {{ block.settings.image | image_url: width: 168 | image_tag: widths: '56,112,168', sizes: '56px', alt: block.settings.alt, loading: 'lazy', class: 'nml-review__img' }}
               {%- endif -%}
-            {%- endfor -%}
-          </div>
-
-          <div class="nm-gifts-h">
-            <b>{{ section.settings.gifts_heading }}</b>
-            <span>{{ section.settings.gifts_sub }}</span>
-          </div>
-          <div class="nm-gifts">
-            {%- for block in section.blocks -%}
-              {%- if block.type == 'gift' -%}
-                {%- liquid
-                  assign g_locked = false
-                  if block.settings.locked and default_qty < block.settings.unlock_qty
-                    assign g_locked = true
-                  endif
-                -%}
-                <div class="nm-gift{% if g_locked %} is-locked{% endif %}" data-nm-gift data-locked="{{ block.settings.locked }}" data-unlock="{{ block.settings.unlock_qty }}" {{ block.shopify_attributes }}>
-                  <span class="nm-gift__tag"><span>{{ block.settings.free_label }}</span>{% if block.settings.value != blank %}<s>{{ block.settings.value }}</s>{% endif %}</span>
-                  <div class="nm-gift__open">
-                    <div class="nm-gift__img">
-                      {%- if block.settings.image != blank -%}{{ block.settings.image | image_url: width: 279 | image_tag: widths: '93,186,279', sizes: '93px', alt: block.settings.label, loading: 'lazy' }}{%- endif -%}
-                    </div>
-                    <span class="nm-gift__label">{{ block.settings.label }}</span>
-                  </div>
-                  <div class="nm-gift__lock">
-                    <svg viewBox="0 0 93 100" fill="none" aria-hidden="true"><path d="M35 44V34a11.5 11.5 0 0 1 23 0v10" stroke="#5a6672" stroke-width="7" stroke-linecap="round"/><rect x="27" y="43" width="39" height="34" rx="5" fill="#5a6672"/><circle cx="46.5" cy="57" r="4.5" fill="#fff"/><rect x="44.5" y="58" width="4" height="9" rx="2" fill="#fff"/></svg>
-                    <div>{{ section.settings.locked_label }}</div>
-                  </div>
-                </div>
-              {%- endif -%}
-            {%- endfor -%}
-          </div>
-
-          <button type="submit" name="add" class="nm-atc">{{ section.settings.atc_label }}</button>
-        {%- endform -%}
-
-        {%- if section.settings.guarantee != blank -%}
-          <p class="nm-guarantee"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="8" fill="{{ section.settings.accent }}"/><path d="M4.5 8.2l2.3 2.3 4.7-4.8" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>{{ section.settings.guarantee }}</span></p>
-        {%- endif -%}
-      </div>
-
-      <div class="nm-reviews">
-        <div class="nm-rv-track" data-nm-rv>
-          {%- for block in section.blocks -%}
-            {%- if block.type == 'review' -%}
-              <div class="nm-rv" {{ block.shopify_attributes }}>
-                <div class="nm-rv__img">
-                  {%- if block.settings.image != blank -%}{{ block.settings.image | image_url: width: 168 | image_tag: widths: '56,112,168', sizes: '56px', alt: block.settings.alt, loading: 'lazy' }}{%- endif -%}
-                </div>
-                <div>
-                  <div class="nm-rv__head">
-                    <span class="nm-rv__name">{{ block.settings.name }}</span>
-                    <span class="nm-rv__stars">{% for i in (1..block.settings.rating) %}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.1 6.6 7.2.9-5.3 5 1.4 7.1L12 18.1 5.6 21.6 7 14.5 1.7 9.5l7.2-.9z"/></svg>{% endfor %}</span>
-                  </div>
-                  <p class="nm-rv__text">{{ block.settings.text }}</p>
-                </div>
+              <div>
+                <div class="nml-review__head"><span class="nml-review__name">{{ block.settings.name }}</span><span style="color:#000;display:inline-flex;line-height:0">{%- for i in (1..block.settings.rating) -%}<svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2l2.9 6.9 7.1.6-5.4 4.7 1.6 7.3L12 17.8 5.8 21.5l1.6-7.3L2 9.5l7.1-.6z"/></svg>{%- endfor -%}</span></div>
+                <p>{{ block.settings.text }}</p>
               </div>
-            {%- endif -%}
-          {%- endfor -%}
-        </div>
-        <button type="button" class="nm-rv-arrow nm-rv-prev" data-nm-rv-dir="-1" aria-label="{{ section.settings.prev_label }}"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5" stroke="#000" stroke-width="2" fill="none"/></svg></button>
-        <button type="button" class="nm-rv-arrow nm-rv-next" data-nm-rv-dir="1" aria-label="{{ section.settings.next_label }}"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5" stroke="#000" stroke-width="2" fill="none"/></svg></button>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
       </div>
+      <button type="button" class="nml-arrow nml-arrow--prev" data-prev aria-label="{{ section.settings.prev_label }}"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5" stroke="#000" stroke-width="2" fill="none"/></svg></button>
+      <button type="button" class="nml-arrow nml-arrow--next" data-next aria-label="{{ section.settings.next_label }}"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5" stroke="#000" stroke-width="2" fill="none"/></svg></button>
     </div>
   </div>
 
-  <div class="nm-iwt">
-    <div class="nm-col nm-reveal" data-nm-reveal>
-      {%- if section.settings.iwt_image != blank -%}
-        <div class="nm-iwt__img">{{ section.settings.iwt_image | image_url: width: 1170 | image_tag: widths: '390,600,780,1170', sizes: '(min-width: 600px) 600px, 100vw', alt: section.settings.iwt_alt, loading: 'lazy' }}</div>
-      {%- endif -%}
-      <div class="nm-iwt__body">
-        <h2 class="nm-iwt__h">{{ section.settings.iwt_heading }}</h2>
-        <div class="nm-iwt__txt">
-          {{ section.settings.iwt_text }}
-          {%- for block in section.blocks -%}
-            {%- if block.type == 'bullet' -%}<div {{ block.shopify_attributes }}>{{ block.settings.text }}</div>{%- endif -%}
-          {%- endfor -%}
-        </div>
-      </div>
+  <div class="nml-iwt nml-reveal">
+    {%- if section.settings.iwt_image != blank -%}
+      {{ section.settings.iwt_image | image_url: width: 1000 | image_tag: widths: '390,600,780,1000', sizes: '(min-width: 520px) 500px, 100vw', alt: section.settings.iwt_alt, loading: 'lazy', class: 'nml-iwt__img' }}
+    {%- endif -%}
+    <div class="nml-iwt__text">
+      <h2>{{ section.settings.iwt_heading }}</h2>
+      <div class="nml-iwt__body">{{ section.settings.iwt_body }}</div>
     </div>
   </div>
 
-  <div class="nm-pct">
-    <div class="nm-col">
-      <div class="nm-pct__num"><span data-nm-counter data-to="{{ section.settings.pct_value }}" data-duration="2000">{{ section.settings.pct_value }}</span><span>{{ section.settings.pct_symbol }}</span></div>
-      <p class="nm-pct__txt">{{ section.settings.pct_text }}</p>
-    </div>
+  <div class="nml-pct nml-reveal">
+    <div class="nml-pct__num"><span data-counter data-to="{{ section.settings.pct_value }}">{{ section.settings.pct_value }}</span><span>{{ section.settings.pct_symbol }}</span></div>
+    <p>{{ section.settings.pct_text }}</p>
   </div>
 </div>
 
 <script>
-(function(){
-  var root=document.getElementById('shopify-section-{{ section.id }}');
-  if(!root)return;
-  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var slider=root.querySelector('[data-nm-slider]'),dots=root.querySelectorAll('[data-nm-dot]');
-  if(slider){
-    slider.addEventListener('scroll',function(){
-      var i=Math.round(slider.scrollLeft/slider.clientWidth);
-      dots.forEach(function(d,k){d.classList.toggle('is-active',k===i);});
-    },{passive:true});
-    dots.forEach(function(d){d.addEventListener('click',function(){
-      slider.scrollTo({left:slider.clientWidth*+d.dataset.nmDot,behavior:reduce?'auto':'smooth'});
-    });});
-  }
-  var qty=root.querySelector('[data-nm-qty]'),bundles=root.querySelectorAll('[data-nm-bundle]'),gifts=root.querySelectorAll('[data-nm-gift]');
-  function update(q,anim){
-    if(qty)qty.value=q;
-    gifts.forEach(function(g){
-      var was=g.classList.contains('is-locked');
-      var lock=g.dataset.locked==='true'&&q<+g.dataset.unlock;
-      g.classList.toggle('is-locked',lock);
-      if(anim&&was&&!lock&&!reduce){g.classList.remove('is-unlocking');void g.offsetWidth;g.classList.add('is-unlocking');}
-    });
-  }
-  bundles.forEach(function(b){
-    b.querySelector('input').addEventListener('change',function(){
-      bundles.forEach(function(x){x.classList.toggle('is-selected',x===b);});
-      update(+b.dataset.qty,true);
-    });
-  });
-  var track=root.querySelector('[data-nm-rv]');
-  root.querySelectorAll('[data-nm-rv-dir]').forEach(function(btn){btn.addEventListener('click',function(){
-    if(track)track.scrollBy({left:track.clientWidth*+btn.dataset.nmRvDir,behavior:reduce?'auto':'smooth'});
-  });});
-  function count(el){
-    var to=parseFloat(el.dataset.to)||0,dur=+el.dataset.duration||2000,t0=null;
-    if(reduce){el.textContent=to;return;}
-    function step(t){if(!t0)t0=t;var p=Math.min((t-t0)/dur,1),e=p*(2-p);el.textContent=Math.round(to*e);if(p<1)requestAnimationFrame(step);}
-    el.textContent='0';requestAnimationFrame(step);
-  }
-  var reveals=root.querySelectorAll('[data-nm-reveal]'),counters=root.querySelectorAll('[data-nm-counter]');
-  if(!('IntersectionObserver' in window)){reveals.forEach(function(r){r.classList.add('is-in');});return;}
-  var io=new IntersectionObserver(function(es){es.forEach(function(e){
-    if(!e.isIntersecting)return;
-    if(e.target.hasAttribute('data-nm-counter'))count(e.target);else e.target.classList.add('is-in');
-    io.unobserve(e.target);
-  });},{threshold:.15});
-  reveals.forEach(function(r){io.observe(r);});
-  counters.forEach(function(c){if(!reduce)c.textContent='0';io.observe(c);});
-})();
+  (function () {
+    var root = document.getElementById('shopify-section-{{ section.id }}');
+    if (!root) return;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var slider = root.querySelector('[data-slider]'), dots = root.querySelectorAll('.nml-dot');
+    dots.forEach(function (d, i) { d.addEventListener('click', function () { slider.scrollTo({ left: i * slider.clientWidth, behavior: reduce ? 'auto' : 'smooth' }); }); });
+    slider.addEventListener('scroll', function () { var i = Math.round(slider.scrollLeft / slider.clientWidth); dots.forEach(function (d, j) { d.classList.toggle('is-active', i === j); }); }, { passive: true });
+    var qty = root.querySelector('[data-qty]'), bundles = root.querySelectorAll('[data-bundle]'), gifts = root.querySelectorAll('[data-gift]');
+    function apply(q) { gifts.forEach(function (g) { g.classList.toggle('is-unlocked', q >= parseInt(g.dataset.unlock, 10)); }); }
+    bundles.forEach(function (b) { b.addEventListener('click', function () { bundles.forEach(function (o) { o.classList.remove('is-selected'); o.setAttribute('aria-checked', 'false'); }); b.classList.add('is-selected'); b.setAttribute('aria-checked', 'true'); qty.value = b.dataset.qtyVal; apply(parseInt(b.dataset.qtyVal, 10)); }); });
+    var tr = root.querySelector('[data-rtrack]');
+    root.querySelector('[data-prev]').addEventListener('click', function () { tr.scrollBy({ left: -tr.clientWidth, behavior: 'smooth' }); });
+    root.querySelector('[data-next]').addEventListener('click', function () { tr.scrollBy({ left: tr.clientWidth, behavior: 'smooth' }); });
+    var counter = root.querySelector('[data-counter]');
+    function count() { var to = parseFloat(counter.dataset.to) || 0, t0 = null; function step(t) { if (!t0) t0 = t; var p = Math.min((t - t0) / 2000, 1), e = p * (2 - p); counter.textContent = Math.round(to * e); if (p < 1) requestAnimationFrame(step); } requestAnimationFrame(step); }
+    var reveals = root.querySelectorAll('.nml-reveal');
+    if (!('IntersectionObserver' in window) || reduce) { reveals.forEach(function (r) { r.classList.add('is-in'); }); return; }
+    counter.textContent = '0';
+    var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (!e.isIntersecting) return; e.target.classList.add('is-in'); if (e.target.contains(counter)) count(); io.unobserve(e.target); }); }, { threshold: 0.15 });
+    reveals.forEach(function (r) { io.observe(r); });
+  })();
 </script>
 
 {% schema %}
@@ -328,82 +256,76 @@
     { "type": "header", "content": "Style" },
     { "type": "font_picker", "id": "body_font", "label": "Body font", "default": "figtree_n4" },
     { "type": "font_picker", "id": "heading_font", "label": "Heading font", "default": "jost_n7" },
+    { "type": "color", "id": "bg", "label": "Background", "default": "#f3f3f3" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#000000" },
     { "type": "color", "id": "accent", "label": "Accent", "default": "#d60200" },
     { "type": "color", "id": "star_color", "label": "Rating stars", "default": "#c80200" },
-    { "type": "color", "id": "text_color", "label": "Text", "default": "#000000" },
-    { "type": "color", "id": "bg", "label": "Background", "default": "#f3f3f3" },
-    { "type": "color", "id": "selected_bg", "label": "Selected option background", "default": "rgba(255,40,0,0.12)" },
-    { "type": "color", "id": "compare_color", "label": "Compare-at price", "default": "#d60200" },
+    { "type": "color", "id": "selected_bg", "label": "Selected card background", "default": "#fde0d9" },
     { "type": "color", "id": "save_bg", "label": "Save label background", "default": "#000000" },
-    { "type": "color", "id": "save_text", "label": "Save label text", "default": "#ffffff" },
-    { "type": "color", "id": "btn_start", "label": "Button gradient centre", "default": "#ff5240" },
-    { "type": "color", "id": "btn_end", "label": "Button gradient edge", "default": "#d60000" },
+    { "type": "color", "id": "compare_color", "label": "Compare price", "default": "#d60200" },
+    { "type": "color", "id": "btn_start", "label": "Button gradient centre", "default": "#ff4b3a" },
+    { "type": "color", "id": "btn_end", "label": "Button gradient edge", "default": "#d10000" },
     { "type": "color", "id": "btn_shadow", "label": "Button shadow", "default": "#b20000" },
     { "type": "color", "id": "grad_start", "label": "Heading gradient start", "default": "#c82000" },
     { "type": "color", "id": "grad_end", "label": "Heading gradient end", "default": "#fc7e66" },
+    { "type": "color", "id": "pct_bg", "label": "Percentage background", "default": "#ffffff" },
     { "type": "header", "content": "Product info" },
-    { "type": "text", "id": "dot_label", "label": "Slide dot label", "default": "Slide" },
-    { "type": "text", "id": "rating_value", "label": "Rating value", "default": "4.66" },
-    { "type": "text", "id": "rating_text", "label": "Rating text", "default": "Based on 1358 reviews" },
+    { "type": "text", "id": "dot_label", "label": "Slider dot label", "default": "Slide" },
+    { "type": "range", "id": "rating", "label": "Rating", "min": 0, "max": 5, "step": 0.1, "default": 4.7 },
+    { "type": "text", "id": "rating_text", "label": "Rating text", "default": "4.66 Based on 1358 reviews" },
     { "type": "text", "id": "title", "label": "Title", "default": "NoMore® Colds" },
-    { "type": "textarea", "id": "subtitle", "label": "Subtitle" },
+    { "type": "textarea", "id": "tagline", "label": "Tagline" },
     { "type": "text", "id": "cure_heading", "label": "Benefits heading" },
     { "type": "image_picker", "id": "cure_image", "label": "Benefits image" },
-    { "type": "text", "id": "cure_alt", "label": "Benefits picture alt text" },
-    { "type": "text", "id": "bundles_heading", "label": "Bundles heading" },
+    { "type": "text", "id": "cure_alt", "label": "Benefits image alt" },
+    { "type": "text", "id": "bundle_heading", "label": "Bundles heading" },
     { "type": "text", "id": "gifts_heading", "label": "Gifts heading" },
     { "type": "text", "id": "gifts_sub", "label": "Gifts subheading" },
-    { "type": "text", "id": "locked_label", "label": "Locked gift label", "default": "Locked" },
-    { "type": "text", "id": "atc_label", "label": "Button label", "default": "Add to cart" },
+    { "type": "text", "id": "atc_label", "label": "Add to cart label", "default": "Add to cart" },
     { "type": "text", "id": "guarantee", "label": "Guarantee text" },
     { "type": "text", "id": "prev_label", "label": "Previous review label", "default": "Previous" },
     { "type": "text", "id": "next_label", "label": "Next review label", "default": "Next" },
     { "type": "header", "content": "Image with text" },
-    { "type": "color", "id": "iwt_bg", "label": "Background", "default": "#f3f3f3" },
     { "type": "image_picker", "id": "iwt_image", "label": "Image" },
-    { "type": "text", "id": "iwt_alt", "label": "Picture alt text" },
+    { "type": "text", "id": "iwt_alt", "label": "Image alt" },
     { "type": "textarea", "id": "iwt_heading", "label": "Heading" },
-    { "type": "richtext", "id": "iwt_text", "label": "Text" },
+    { "type": "richtext", "id": "iwt_body", "label": "Body" },
     { "type": "header", "content": "Percentage" },
-    { "type": "color", "id": "pct_bg", "label": "Background", "default": "#ffffff" },
     { "type": "number", "id": "pct_value", "label": "Number", "default": 100 },
     { "type": "text", "id": "pct_symbol", "label": "Symbol", "default": "%" },
     { "type": "text", "id": "pct_text", "label": "Text" }
   ],
   "blocks": [
-    { "type": "slide", "name": "Slide", "limit": 15, "settings": [
+    { "type": "slide", "name": "Slide", "limit": 20, "settings": [
       { "type": "image_picker", "id": "image", "label": "Image" },
       { "type": "text", "id": "alt", "label": "Alt text" }
-    ]},
+    ] },
     { "type": "bundle", "name": "Bundle", "limit": 5, "settings": [
       { "type": "text", "id": "title", "label": "Title", "default": "1 Device" },
-      { "type": "text", "id": "save_label", "label": "Save label" },
+      { "type": "text", "id": "save", "label": "Save label" },
       { "type": "text", "id": "price", "label": "Price" },
-      { "type": "text", "id": "compare_price", "label": "Compare-at price" },
+      { "type": "text", "id": "compare", "label": "Compare-at price" },
       { "type": "text", "id": "badge", "label": "Badge text" },
       { "type": "color", "id": "badge_color", "label": "Badge colour", "default": "#f32626" },
-      { "type": "range", "id": "quantity", "label": "Quantity", "min": 1, "max": 10, "step": 1, "default": 1 },
+      { "type": "number", "id": "quantity", "label": "Quantity", "default": 1 },
       { "type": "checkbox", "id": "selected", "label": "Selected by default", "default": false }
-    ]},
+    ] },
     { "type": "gift", "name": "Gift", "limit": 6, "settings": [
       { "type": "image_picker", "id": "image", "label": "Image" },
       { "type": "text", "id": "label", "label": "Label" },
       { "type": "text", "id": "free_label", "label": "Free label", "default": "FREE" },
       { "type": "text", "id": "value", "label": "Value" },
-      { "type": "checkbox", "id": "locked", "label": "Locked until bundle quantity", "default": true },
-      { "type": "range", "id": "unlock_qty", "label": "Unlock at quantity", "min": 1, "max": 10, "step": 1, "default": 1 }
-    ]},
+      { "type": "number", "id": "unlock_qty", "label": "Unlock at quantity (locked below this)", "default": 1 },
+      { "type": "text", "id": "locked_label", "label": "Locked label", "default": "Locked" }
+    ] },
     { "type": "review", "name": "Review", "limit": 10, "settings": [
       { "type": "image_picker", "id": "image", "label": "Image" },
-      { "type": "text", "id": "alt", "label": "Alt text" },
+      { "type": "text", "id": "alt", "label": "Image alt" },
       { "type": "text", "id": "name", "label": "Name" },
       { "type": "range", "id": "rating", "label": "Rating", "min": 1, "max": 5, "step": 1, "default": 5 },
       { "type": "textarea", "id": "text", "label": "Text" }
-    ]},
-    { "type": "bullet", "name": "Benefit line", "limit": 8, "settings": [
-      { "type": "richtext", "id": "text", "label": "Text" }
-    ]}
+    ] }
   ],
-  "presets": [{ "name": "Landing hero" }]
+  "presets": [ { "name": "Landing hero" } ]
 }
 {% endschema %}
