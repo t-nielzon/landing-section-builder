@@ -1,0 +1,407 @@
+{%- liquid
+  assign sid = '#shopify-section-' | append: section.id
+  assign body_font = section.settings.body_font
+  assign body_bold = body_font | font_modify: 'weight', 'bold'
+  assign body_black = body_font | font_modify: 'weight', '900'
+  assign body_med = body_font | font_modify: 'weight', '500'
+  assign head_font = section.settings.heading_font
+  assign selected_qty = 1
+  for block in section.blocks
+    if block.type == 'bundle' and block.settings.selected
+      assign selected_qty = block.settings.quantity
+    endif
+  endfor
+-%}
+<style>
+  {{ body_font | font_face: font_display: 'swap' }}
+  {{ body_bold | font_face: font_display: 'swap' }}
+  {{ body_black | font_face: font_display: 'swap' }}
+  {{ body_med | font_face: font_display: 'swap' }}
+  {{ head_font | font_face: font_display: 'swap' }}
+  {{ sid }} {
+    --nm-accent: {{ section.settings.accent }};
+    --nm-text: {{ section.settings.text_color }};
+    --nm-bg: {{ section.settings.bg_color }};
+    --nm-g1: {{ section.settings.grad_start }};
+    --nm-g2: {{ section.settings.grad_end }};
+    --nm-body: {{ body_font.family }}, {{ body_font.fallback_families }};
+    --nm-head: {{ head_font.family }}, {{ head_font.fallback_families }};
+  }
+  {{ sid }} .nm { background: var(--nm-bg); color: var(--nm-text); font-family: var(--nm-body); max-width: 600px; margin: 0 auto; letter-spacing: .6px; overflow: hidden; }
+  {{ sid }} .nm *, {{ sid }} .nm *::before, {{ sid }} .nm *::after { box-sizing: border-box; }
+  {{ sid }} .nm p { margin: 0; }
+  {{ sid }} .nm-slider { position: relative; }
+  {{ sid }} .nm-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  {{ sid }} .nm-track::-webkit-scrollbar { display: none; }
+  {{ sid }} .nm-slide { flex: 0 0 100%; scroll-snap-align: start; background: #fff; aspect-ratio: 1; }
+  {{ sid }} .nm-slide img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  {{ sid }} .nm-dots { display: flex; justify-content: center; gap: 8px; padding: 24px 0 26px; }
+  {{ sid }} .nm-dot { width: 8px; height: 8px; border-radius: 50%; border: 1px solid #999; background: transparent; padding: 0; cursor: pointer; transition: transform .2s; }
+  {{ sid }} .nm-dot.is-active { background: #000; border-color: #000; transform: scale(1.1); }
+  {{ sid }} .nm-info { padding: 0 15px 15px; }
+  {{ sid }} .nm-rating { display: flex; align-items: center; gap: 12px; font-size: 15px; line-height: 21px; color: rgba(0,0,0,.75); }
+  {{ sid }} .nm-stars { display: flex; gap: 2px; color: {{ section.settings.star_color }}; }
+  {{ sid }} .nm-stars svg { width: 16px; height: 16px; display: block; }
+  {{ sid }} .nm-title { font-family: var(--nm-head); font-weight: 700; font-size: 30px; line-height: 39px; margin: 15px 0 5px; color: #000; }
+  {{ sid }} .nm-sub { font-weight: 700; font-size: 14px; line-height: 22.4px; letter-spacing: 0; color: #000; }
+  {{ sid }} .nm-cure { text-align: center; font-weight: 700; font-size: 17px; line-height: 30.6px; margin-top: 8px; text-transform: uppercase; }
+  {{ sid }} .nm-cure-img img { width: 100%; height: auto; display: block; margin-top: 4px; }
+  {{ sid }} .nm-divider { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 14px; line-height: 19.6px; margin: 20px 0 15px; }
+  {{ sid }} .nm-divider::before, {{ sid }} .nm-divider::after { content: ""; flex: 1; height: 2px; background: rgba(0,0,0,.25); }
+  {{ sid }} .nm-bundles { display: flex; flex-direction: column; gap: 10px; }
+  {{ sid }} .nm-bundle { position: relative; display: flex; align-items: center; gap: 18px; min-height: 75px; padding: 12px 20px; border-radius: 8px; background: rgba(255,255,255,.573); box-shadow: rgba(0,0,0,.3) 0 0 0 1px inset; cursor: pointer; }
+  {{ sid }} .nm-bundle.has-badge { min-height: 89px; }
+  {{ sid }} .nm-bundle.is-selected { background: {{ section.settings.selected_bg }}; box-shadow: #000 0 0 0 2px inset; }
+  {{ sid }} .nm-bundle input { position: absolute; opacity: 0; pointer-events: none; }
+  {{ sid }} .nm-radio { flex: 0 0 20px; width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 3px solid #fff; box-shadow: rgba(0,0,0,.3) 0 0 0 2px; }
+  {{ sid }} .nm-bundle.is-selected .nm-radio { background: #000; box-shadow: #000 0 0 0 2px; }
+  {{ sid }} .nm-bundle-main { flex: 1; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  {{ sid }} .nm-bundle-title { font-size: 20px; font-weight: 700; line-height: 28px; letter-spacing: 0; }
+  {{ sid }} .nm-save { background: #000; color: #fff; font-size: 12px; font-weight: 700; font-style: italic; line-height: 16.8px; padding: 4px 8px; border-radius: 8px; white-space: nowrap; }
+  {{ sid }} .nm-prices { text-align: right; }
+  {{ sid }} .nm-price { font-size: 20px; font-weight: 700; line-height: 28px; letter-spacing: 0; }
+  {{ sid }} .nm-compare { font-size: 14px; line-height: 19.6px; color: {{ section.settings.compare_color }}; text-decoration: line-through; }
+  {{ sid }} .nm-badge { position: absolute; top: -8px; right: 16px; color: #fff; font: 700 12px/12px sans-serif; letter-spacing: 0; padding: 6px 8px; border-radius: 0 0 5px 5px; text-transform: uppercase; }
+  {{ sid }} .nm-badge::before, {{ sid }} .nm-badge::after { content: ""; position: absolute; top: 0; width: 0; height: 0; border-bottom: 8px solid rgba(0,0,0,.45); }
+  {{ sid }} .nm-badge::before { left: -6px; border-left: 6px solid transparent; }
+  {{ sid }} .nm-badge::after { right: -6px; border-right: 6px solid transparent; }
+  {{ sid }} .nm-gifts-head { text-align: center; margin-top: 17px; }
+  {{ sid }} .nm-gifts-title { display: block; font-size: 20px; font-weight: 900; line-height: 24px; }
+  {{ sid }} .nm-gifts-sub { display: block; font-size: 16px; line-height: 22.4px; margin-top: 2px; }
+  {{ sid }} .nm-gifts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
+  {{ sid }} .nm-gift { position: relative; min-height: 204px; border-radius: 8px; padding: 14px 10px 10px; text-align: center; background: rgba(255,255,255,.573); box-shadow: rgba(0,0,0,.3) 0 0 0 1px inset; }
+  {{ sid }} .nm-gift.is-unlocked { background: {{ section.settings.selected_bg }}; box-shadow: #000 0 0 0 2px inset; }
+  {{ sid }} .nm-gift-pill { position: absolute; top: -8px; left: 50%; transform: translateX(-50%); background: #000; color: #fff; border-radius: 8px; padding: 8px 8px; font-size: 12px; line-height: 12px; font-weight: 500; white-space: nowrap; display: flex; gap: 6px; }
+  {{ sid }} .nm-gift-pill s { text-decoration: line-through; }
+  {{ sid }} .nm-gift-img { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; }
+  {{ sid }} .nm-gift-img img { width: 100%; height: 100%; object-fit: contain; }
+  {{ sid }} .nm-gift-lock { display: none; color: #4a5568; }
+  {{ sid }} .nm-gift-lock svg { width: 44px; height: 54px; }
+  {{ sid }} .nm-gift.is-locked .nm-gift-lock { display: flex; }
+  {{ sid }} .nm-gift.is-locked .nm-gift-img img, {{ sid }} .nm-gift.is-locked .nm-gift-label { display: none; }
+  {{ sid }} .nm-gift.is-unlocked .nm-gift-img img { animation: nmUnlock .5s ease; }
+  {{ sid }} .nm-gift-label, {{ sid }} .nm-gift-locked { display: block; font-size: 14px; font-weight: 500; line-height: 19.6px; margin-top: 9px; }
+  {{ sid }} .nm-gift-locked { display: none; color: #555; }
+  {{ sid }} .nm-gift.is-locked .nm-gift-locked { display: block; }
+  @keyframes nmUnlock { from { opacity: 0; transform: scale(.85); } to { opacity: 1; transform: none; } }
+  {{ sid }} .nm-atc { display: block; width: 100%; margin-top: 26px; height: 47px; border: 0; border-radius: 8px; cursor: pointer; color: #fff; font-family: var(--nm-body); font-size: 21px; font-weight: 700; letter-spacing: 1px; background: radial-gradient(ellipse at center, {{ section.settings.btn_light }} 0%, {{ section.settings.btn_dark }} 75%); box-shadow: {{ section.settings.btn_shadow }} 0 3px 0 0, rgba(0,0,0,.5) 0 5px 10px 0; transition: filter .2s, transform .2s; }
+  {{ sid }} .nm-atc:hover { filter: brightness(1.08); }
+  {{ sid }} .nm-atc:active { transform: translateY(2px); }
+  {{ sid }} .nm-guarantee { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 19px; font-size: 14px; font-weight: 700; line-height: 25.2px; color: rgba(0,0,0,.75); }
+  {{ sid }} .nm-guarantee svg { width: 15px; height: 15px; color: var(--nm-accent); }
+  {{ sid }} .nm-reviews { position: relative; margin-top: 18px; padding: 10px 12px; }
+  {{ sid }} .nm-rtrack { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  {{ sid }} .nm-rtrack::-webkit-scrollbar { display: none; }
+  {{ sid }} .nm-review { flex: 0 0 100%; scroll-snap-align: start; display: flex; gap: 12px; background: #fff; border-radius: 8px; padding: 8px 8px 8px 8px; min-height: 115px; }
+  {{ sid }} .nm-review-img { flex: 0 0 56px; width: 56px; height: 74px; margin-top: 12px; border-radius: 8px; overflow: hidden; background: #ddd; }
+  {{ sid }} .nm-review-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  {{ sid }} .nm-review-name { font-size: 13px; font-weight: 700; line-height: 16.9px; }
+  {{ sid }} .nm-review-stars { font-size: 13px; letter-spacing: 1px; margin-left: 5px; }
+  {{ sid }} .nm-review-text { font-size: 12px; line-height: 15.6px; margin-top: 4px; }
+  {{ sid }} .nm-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; border-radius: 50%; border: 0; padding: 4px; background: #f3f3f3; box-shadow: rgba(0,0,0,.08) 0 -2px 12px; cursor: pointer; color: #000; display: flex; }
+  {{ sid }} .nm-arrow svg { width: 16px; height: 16px; }
+  {{ sid }} .nm-prev { left: 4px; } {{ sid }} .nm-next { right: 4px; }
+  {{ sid }} .nm-story { background: var(--nm-bg); padding-bottom: 40px; }
+  {{ sid }} .nm-story-img img { width: 100%; height: auto; display: block; }
+  {{ sid }} .nm-story-text { padding: 40px 32px 0; }
+  {{ sid }} .nm-story h2 { font-family: var(--nm-head); font-weight: 700; font-size: 27.5px; line-height: 35.75px; letter-spacing: .6px; margin: 0 0 20px; background: linear-gradient(127deg, var(--nm-g1) 21%, var(--nm-g2) 81%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  {{ sid }} .nm-story-body p { font-size: 15px; line-height: 27px; margin-bottom: 10px; }
+  {{ sid }} .nm-pct { background: {{ section.settings.pct_bg }}; text-align: center; padding: 60px 16px; }
+  {{ sid }} .nm-pct-num { display: inline-flex; gap: 13px; font-size: 60px; line-height: 60px; font-weight: 900; letter-spacing: -1.2px; background: linear-gradient(127deg, var(--nm-g1) 21%, var(--nm-g2) 81%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  {{ sid }} .nm-pct-text { font-size: 18px; font-weight: 700; line-height: 32.4px; margin-top: 24px !important; }
+  {{ sid }} .nm-reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
+  {{ sid }} .nm-reveal.is-in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    {{ sid }} .nm-reveal { opacity: 1; transform: none; transition: none; }
+    {{ sid }} .nm-track, {{ sid }} .nm-rtrack { scroll-behavior: auto; }
+    {{ sid }} .nm-gift img, {{ sid }} .nm-atc, {{ sid }} .nm-dot { animation: none !important; transition: none !important; }
+  }
+</style>
+
+<div class="nm" data-nm-root>
+  <div class="nm-slider nm-reveal">
+    <div class="nm-track" data-nm-track>
+      {%- assign slide_i = 0 -%}
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'slide' -%}
+          <div class="nm-slide" {{ block.shopify_attributes }}>
+            {%- if block.settings.image != blank -%}
+              {%- if slide_i == 0 -%}
+                {{ block.settings.image | image_url: width: 1200 | image_tag: widths: '390, 600, 780, 1200', sizes: '(min-width: 600px) 600px, 100vw', loading: 'eager', fetchpriority: 'high', alt: block.settings.alt }}
+              {%- else -%}
+                {{ block.settings.image | image_url: width: 1200 | image_tag: widths: '390, 600, 780, 1200', sizes: '(min-width: 600px) 600px, 100vw', loading: 'lazy', alt: block.settings.alt }}
+              {%- endif -%}
+            {%- endif -%}
+          </div>
+          {%- assign slide_i = slide_i | plus: 1 -%}
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+    <div class="nm-dots" data-nm-dots>
+      {%- for i in (1..slide_i) -%}
+        <button type="button" class="nm-dot{% if forloop.first %} is-active{% endif %}" aria-label="{{ section.settings.dot_label }} {{ i }}" data-i="{{ forloop.index0 }}"></button>
+      {%- endfor -%}
+    </div>
+  </div>
+
+  <div class="nm-info nm-reveal">
+    <div class="nm-rating">
+      <span class="nm-stars" aria-hidden="true">
+        {%- for i in (1..5) -%}
+          <svg viewBox="0 0 24 24"><defs><linearGradient id="nmh-{{ section.id }}"><stop offset="50%" stop-color="currentColor"/><stop offset="50%" stop-color="#ccc"/></linearGradient></defs><path fill="{% if forloop.last %}url(#nmh-{{ section.id }}){% else %}currentColor{% endif %}" d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+        {%- endfor -%}
+      </span>
+      <span>{{ section.settings.rating_text }}</span>
+    </div>
+    <h1 class="nm-title">{{ section.settings.title }}</h1>
+    <p class="nm-sub">{{ section.settings.subtitle }}</p>
+    {%- if section.settings.cure_heading != blank -%}<div class="nm-cure">{{ section.settings.cure_heading }}</div>{%- endif -%}
+    {%- if section.settings.cure_image != blank -%}
+      <div class="nm-cure-img">{{ section.settings.cure_image | image_url: width: 800 | image_tag: widths: '360, 720, 800', sizes: '(min-width: 600px) 570px, calc(100vw - 30px)', loading: 'lazy', alt: section.settings.cure_alt }}</div>
+    {%- endif -%}
+
+    <div class="nm-divider">{{ section.settings.bundles_heading }}</div>
+
+    {%- form 'product', product, data-nm-form: '' -%}
+      <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+      <input type="hidden" name="quantity" value="{{ selected_qty }}" data-nm-qty>
+      <div class="nm-bundles" role="radiogroup">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'bundle' -%}
+            <label class="nm-bundle{% if block.settings.selected %} is-selected{% endif %}{% if block.settings.badge != blank %} has-badge{% endif %}" {{ block.shopify_attributes }} data-qty="{{ block.settings.quantity }}">
+              <input type="radio" name="nm-bundle-{{ section.id }}" value="{{ block.settings.quantity }}" {% if block.settings.selected %}checked{% endif %}>
+              {%- if block.settings.badge != blank -%}<span class="nm-badge" style="background: {{ block.settings.badge_color }}">{{ block.settings.badge }}</span>{%- endif -%}
+              <span class="nm-radio"></span>
+              <span class="nm-bundle-main">
+                <span class="nm-bundle-title">{{ block.settings.title }}</span>
+                {%- if block.settings.save_label != blank -%}<span class="nm-save">{{ block.settings.save_label }}</span>{%- endif -%}
+              </span>
+              <span class="nm-prices">
+                <div class="nm-price">{{ block.settings.price }}</div>
+                {%- if block.settings.compare_price != blank -%}<div class="nm-compare">{{ block.settings.compare_price }}</div>{%- endif -%}
+              </span>
+            </label>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+
+      <div class="nm-gifts-head">
+        <b class="nm-gifts-title">{{ section.settings.gifts_title }}</b>
+        <span class="nm-gifts-sub">{{ section.settings.gifts_sub }}</span>
+      </div>
+      <div class="nm-gifts">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'gift' -%}
+            {%- liquid
+              assign locked = block.settings.locked
+              if block.settings.unlock_qty > 0
+                if selected_qty >= block.settings.unlock_qty
+                  assign locked = false
+                else
+                  assign locked = true
+                endif
+              endif
+            -%}
+            <div class="nm-gift {% if locked %}is-locked{% else %}is-unlocked{% endif %}" data-unlock="{{ block.settings.unlock_qty }}" {{ block.shopify_attributes }}>
+              <span class="nm-gift-pill"><span>{{ section.settings.free_label }}</span><s>{{ block.settings.value }}</s></span>
+              <div class="nm-gift-img">
+                {%- if block.settings.image != blank -%}
+                  {{ block.settings.image | image_url: width: 300 | image_tag: widths: '120, 200, 300', sizes: '120px', loading: 'lazy', alt: block.settings.alt }}
+                {%- endif -%}
+                <span class="nm-gift-lock" aria-hidden="true"><svg viewBox="0 0 24 28" fill="currentColor"><path d="M12 1a7 7 0 0 0-7 7v4H4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V14a2 2 0 0 0-2-2h-1V8a7 7 0 0 0-7-7zm-4 11V8a4 4 0 0 1 8 0v4H8z"/></svg></span>
+              </div>
+              <span class="nm-gift-label">{{ block.settings.label }}</span>
+              <span class="nm-gift-locked">{{ section.settings.locked_label }}</span>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+
+      <button type="submit" name="add" class="nm-atc"{% unless product.selected_or_first_available_variant.available %} disabled{% endunless %}>{{ section.settings.atc_label }}</button>
+    {%- endform -%}
+
+    <div class="nm-guarantee">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="8" fill="currentColor"/><path d="M4.5 8.2l2.3 2.3 4.7-4.8" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>{{ section.settings.guarantee }}</span>
+    </div>
+
+    <div class="nm-reviews">
+      <div class="nm-rtrack" data-nm-rtrack>
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'review' -%}
+            <div class="nm-review" {{ block.shopify_attributes }}>
+              <div class="nm-review-img">
+                {%- if block.settings.image != blank -%}
+                  {{ block.settings.image | image_url: width: 168 | image_tag: widths: '56, 112, 168', sizes: '56px', loading: 'lazy', alt: block.settings.alt }}
+                {%- endif -%}
+              </div>
+              <div>
+                <span class="nm-review-name">{{ block.settings.name }}</span>
+                <span class="nm-review-stars" aria-label="{{ block.settings.rating }}/5">{%- for i in (1..block.settings.rating) -%}★{%- endfor -%}</span>
+                <p class="nm-review-text">{{ block.settings.text }}</p>
+              </div>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+      <button type="button" class="nm-arrow nm-prev" data-nm-prev aria-label="{{ section.settings.prev_label }}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 3L5 8l5 5"/></svg></button>
+      <button type="button" class="nm-arrow nm-next" data-nm-next aria-label="{{ section.settings.next_label }}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3l5 5-5 5"/></svg></button>
+    </div>
+  </div>
+
+  <div class="nm-story">
+    {%- if section.settings.story_image != blank -%}
+      <div class="nm-story-img nm-reveal">{{ section.settings.story_image | image_url: width: 1200 | image_tag: widths: '390, 600, 780, 1200', sizes: '(min-width: 600px) 600px, 100vw', loading: 'lazy', alt: section.settings.story_alt }}</div>
+    {%- endif -%}
+    <div class="nm-story-text nm-reveal">
+      <h2>{{ section.settings.story_heading }}</h2>
+      <div class="nm-story-body">{{ section.settings.story_body }}</div>
+    </div>
+  </div>
+
+  <div class="nm-pct">
+    <div class="nm-pct-num"><span data-nm-counter data-to="{{ section.settings.pct_value }}">{{ section.settings.pct_value }}</span><span>{{ section.settings.pct_symbol }}</span></div>
+    <p class="nm-pct-text">{{ section.settings.pct_text }}</p>
+  </div>
+</div>
+
+<script>
+(function(){
+  var root = document.getElementById('shopify-section-{{ section.id }}');
+  if (!root) return;
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var track = root.querySelector('[data-nm-track]');
+  var dots = root.querySelectorAll('.nm-dot');
+  if (track) {
+    track.addEventListener('scroll', function(){
+      var i = Math.round(track.scrollLeft / track.clientWidth);
+      dots.forEach(function(d, n){ d.classList.toggle('is-active', n === i); });
+    }, { passive: true });
+    dots.forEach(function(d){ d.addEventListener('click', function(){
+      track.scrollTo({ left: track.clientWidth * +d.dataset.i, behavior: reduce ? 'auto' : 'smooth' });
+    }); });
+  }
+  var qty = root.querySelector('[data-nm-qty]');
+  var bundles = root.querySelectorAll('.nm-bundle');
+  var gifts = root.querySelectorAll('.nm-gift');
+  function update(q){
+    gifts.forEach(function(g){
+      var u = +g.dataset.unlock; if (!u) return;
+      var on = q >= u;
+      g.classList.toggle('is-locked', !on); g.classList.toggle('is-unlocked', on);
+    });
+  }
+  bundles.forEach(function(b){
+    b.querySelector('input').addEventListener('change', function(){
+      bundles.forEach(function(x){ x.classList.toggle('is-selected', x === b); });
+      qty.value = b.dataset.qty; update(+b.dataset.qty);
+    });
+  });
+  var rt = root.querySelector('[data-nm-rtrack]');
+  if (rt) {
+    root.querySelector('[data-nm-prev]').addEventListener('click', function(){ rt.scrollBy({ left: -rt.clientWidth, behavior: reduce ? 'auto' : 'smooth' }); });
+    root.querySelector('[data-nm-next]').addEventListener('click', function(){ rt.scrollBy({ left: rt.clientWidth, behavior: reduce ? 'auto' : 'smooth' }); });
+  }
+  var counters = root.querySelectorAll('[data-nm-counter]');
+  var reveals = root.querySelectorAll('.nm-reveal');
+  function count(el){
+    var to = parseFloat(el.dataset.to) || 0;
+    if (reduce) { el.textContent = to; return; }
+    var t0 = null;
+    function step(t){ if (!t0) t0 = t; var p = Math.min((t - t0) / 2000, 1); el.textContent = Math.round(to * p * (2 - p)); if (p < 1) requestAnimationFrame(step); }
+    el.textContent = '0'; requestAnimationFrame(step);
+  }
+  if (!('IntersectionObserver' in window)) { reveals.forEach(function(r){ r.classList.add('is-in'); }); return; }
+  var io = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      if (e.target.hasAttribute('data-nm-counter')) count(e.target); else e.target.classList.add('is-in');
+      io.unobserve(e.target);
+    });
+  }, { threshold: 0.15 });
+  reveals.forEach(function(r){ io.observe(r); });
+  counters.forEach(function(c){ if (!reduce) c.textContent = '0'; io.observe(c); });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Landing hero",
+  "tag": "section",
+  "settings": [
+    { "type": "header", "content": "Style" },
+    { "type": "font_picker", "id": "body_font", "label": "Body font", "default": "figtree_n4" },
+    { "type": "font_picker", "id": "heading_font", "label": "Heading font", "default": "jost_n7" },
+    { "type": "color", "id": "accent", "label": "Accent", "default": "#D60200" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#000000" },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#F3F3F3" },
+    { "type": "color", "id": "star_color", "label": "Rating stars", "default": "#C80200" },
+    { "type": "color", "id": "selected_bg", "label": "Selected card background", "default": "#FBDCD6" },
+    { "type": "color", "id": "compare_color", "label": "Compare-at price", "default": "#D60200" },
+    { "type": "color", "id": "btn_light", "label": "Button gradient centre", "default": "#FF4E3C" },
+    { "type": "color", "id": "btn_dark", "label": "Button gradient edge", "default": "#D60200" },
+    { "type": "color", "id": "btn_shadow", "label": "Button shadow", "default": "#B20000" },
+    { "type": "color", "id": "grad_start", "label": "Heading gradient start", "default": "#C82000" },
+    { "type": "color", "id": "grad_end", "label": "Heading gradient end", "default": "#FC7E66" },
+    { "type": "color", "id": "pct_bg", "label": "Percentage background", "default": "#FFFFFF" },
+    { "type": "header", "content": "Product info" },
+    { "type": "text", "id": "dot_label", "label": "Slide dot label", "default": "Slide" },
+    { "type": "text", "id": "rating_text", "label": "Rating text", "default": "4.66 Based on 1358 reviews" },
+    { "type": "text", "id": "title", "label": "Title", "default": "NoMore® Colds" },
+    { "type": "textarea", "id": "subtitle", "label": "Subtitle" },
+    { "type": "text", "id": "cure_heading", "label": "Benefits heading" },
+    { "type": "image_picker", "id": "cure_image", "label": "Benefits image" },
+    { "type": "text", "id": "cure_alt", "label": "Benefits image alt" },
+    { "type": "text", "id": "bundles_heading", "label": "Bundles heading" },
+    { "type": "text", "id": "gifts_title", "label": "Gifts title" },
+    { "type": "text", "id": "gifts_sub", "label": "Gifts subtitle" },
+    { "type": "text", "id": "free_label", "label": "Free label", "default": "FREE" },
+    { "type": "text", "id": "locked_label", "label": "Locked label", "default": "Locked" },
+    { "type": "text", "id": "atc_label", "label": "Button label", "default": "Add to cart" },
+    { "type": "text", "id": "guarantee", "label": "Guarantee text" },
+    { "type": "text", "id": "prev_label", "label": "Previous review label", "default": "Previous" },
+    { "type": "text", "id": "next_label", "label": "Next review label", "default": "Next" },
+    { "type": "header", "content": "Image with text" },
+    { "type": "image_picker", "id": "story_image", "label": "Image" },
+    { "type": "text", "id": "story_alt", "label": "Image alt" },
+    { "type": "textarea", "id": "story_heading", "label": "Heading" },
+    { "type": "richtext", "id": "story_body", "label": "Body" },
+    { "type": "header", "content": "Percentage" },
+    { "type": "number", "id": "pct_value", "label": "Number", "default": 100 },
+    { "type": "text", "id": "pct_symbol", "label": "Symbol", "default": "%" },
+    { "type": "text", "id": "pct_text", "label": "Text" }
+  ],
+  "blocks": [
+    { "type": "slide", "name": "Slide", "limit": 15, "settings": [
+      { "type": "image_picker", "id": "image", "label": "Image" },
+      { "type": "text", "id": "alt", "label": "Alt text" }
+    ] },
+    { "type": "bundle", "name": "Bundle", "limit": 4, "settings": [
+      { "type": "text", "id": "title", "label": "Title", "default": "1 Device" },
+      { "type": "text", "id": "save_label", "label": "Save label" },
+      { "type": "text", "id": "price", "label": "Price" },
+      { "type": "text", "id": "compare_price", "label": "Compare-at price" },
+      { "type": "text", "id": "badge", "label": "Badge text" },
+      { "type": "color", "id": "badge_color", "label": "Badge colour", "default": "#F32626" },
+      { "type": "number", "id": "quantity", "label": "Quantity", "default": 1 },
+      { "type": "checkbox", "id": "selected", "label": "Selected by default", "default": false }
+    ] },
+    { "type": "gift", "name": "Gift", "limit": 4, "settings": [
+      { "type": "image_picker", "id": "image", "label": "Image" },
+      { "type": "text", "id": "alt", "label": "Alt text" },
+      { "type": "text", "id": "label", "label": "Label" },
+      { "type": "text", "id": "value", "label": "Value" },
+      { "type": "checkbox", "id": "locked", "label": "Locked", "default": false },
+      { "type": "number", "id": "unlock_qty", "label": "Unlock at bundle quantity (0 = use Locked)", "default": 0 }
+    ] },
+    { "type": "review", "name": "Review", "limit": 10, "settings": [
+      { "type": "image_picker", "id": "image", "label": "Image" },
+      { "type": "text", "id": "alt", "label": "Alt text" },
+      { "type": "text", "id": "name", "label": "Name" },
+      { "type": "range", "id": "rating", "label": "Rating", "min": 1, "max": 5, "step": 1, "default": 5 },
+      { "type": "textarea", "id": "text", "label": "Text" }
+    ] }
+  ],
+  "presets": [ { "name": "Landing hero" } ]
+}
+{% endschema %}

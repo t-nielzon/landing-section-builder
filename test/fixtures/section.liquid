@@ -1,0 +1,32 @@
+<div class="landing">
+  <h2 class="landing__heading">{{ section.settings.heading | escape }}</h2>
+  {%- for block in section.blocks -%}
+    <div class="landing__slide" {{ block.shopify_attributes }}>
+      {{ block.settings.image | image_url: width: 780 | image_tag: widths: '390, 780', sizes: '100vw', alt: block.settings.alt }}
+    </div>
+  {%- endfor -%}
+</div>
+<style>
+  #shopify-section-{{ section.id }} .landing { padding: 24px 16px; }
+  #shopify-section-{{ section.id }} .landing__heading { color: {{ section.settings.accent }}; }
+</style>
+{% schema %}
+{
+  "name": "Landing hero",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading" },
+    { "type": "color", "id": "accent", "label": "Accent", "default": "#c80200" }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "alt", "label": "Alt text" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Landing hero" }]
+}
+{% endschema %}

@@ -1,0 +1,273 @@
+{
+  "sections": {
+    "landing": {
+      "type": "nomore-landing",
+      "settings": {
+        "body_font": "figtree_n4",
+        "heading_font": "jost_n7",
+        "accent": "#D60200",
+        "text_color": "#000000",
+        "bg_color": "#F3F3F3",
+        "star_color": "#C80200",
+        "selected_bg": "#FBDCD6",
+        "compare_color": "#D60200",
+        "btn_light": "#FF4E3C",
+        "btn_dark": "#D60200",
+        "btn_shadow": "#B20000",
+        "grad_start": "#C82000",
+        "grad_end": "#FC7E66",
+        "pct_bg": "#FFFFFF",
+        "dot_label": "Slide",
+        "rating_text": "4.66 Based on 1358 reviews",
+        "title": "NoMore® Colds",
+        "subtitle": "Vanquish colds and sinusitis naturally in 24-hour... a liberating, medicine-free revival!!",
+        "cure_heading": "WHAT CAN IT CURE?",
+        "cure_image": "shopify://shop_images/nml-no_more_colds_67048029-acf2-4046-af7e-a6e219edc698.png",
+        "cure_alt": "NoMore® device benefits: No More Sinusitis, No More Colds, No More Allergies, Safe with no side effects",
+        "bundles_heading": "BUY MORE - SAVE MORE",
+        "gifts_title": "Free Gifts with your Order",
+        "gifts_sub": "Unlock selecting a higher Bundle",
+        "free_label": "FREE",
+        "locked_label": "Locked",
+        "atc_label": "Add to cart",
+        "guarantee": "60-DAY MONEY BACK GUARANTEE",
+        "prev_label": "Previous",
+        "next_label": "Next",
+        "story_image": "shopify://shop_images/nml-immagini_prodotto_nomorecolds_4.png",
+        "story_alt": "NoMore® Colds red light therapy device with glowing nasal adapters, offering relief from sore throat, colds, allergies, and sinusitis",
+        "story_heading": "Are you struggling with persistent colds, sinusitis or allergies?",
+        "story_body": "<p>No worries!<strong> NoMore®</strong>, powered by advanced <strong>Red Light Therapy</strong>, is your<strong> quick and effective solution</strong> for <strong>colds and sinusitis relief</strong></p><p><strong>In just 10 minutes a day</strong>, it will:</p><p><strong>🎯 </strong>Target and <strong>alleviate </strong>common<strong> cold and sinusitis symptoms</strong></p><p><strong>❤️ </strong>Promote relaxation and<strong> provide relief</strong></p><p><strong>⚡️ Easy application</strong> on the nasal area</p>",
+        "pct_value": 100,
+        "pct_symbol": "%",
+        "pct_text": "Safe solution without side-effects"
+      },
+      "blocks": {
+        "s1": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/nml-nomore_pdp_images_20.png",
+            "alt": ""
+          }
+        },
+        "s2": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/nml-immaginiprodottonomorecolds_9_-min-538514.jpg",
+            "alt": "Five reasons to try NoMore® Colds red light nasal therapy device: fast relief in under 10 minutes, boosts natural healing, drug-free solution, saves money, and 90-day money back guarantee"
+          }
+        },
+        "s3": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/nml-nomore_colds_images_5.jpg",
+            "alt": "Two people using NoMore® Colds red light therapy device in their noses. Text reads: Defeat colds and sinusitis naturally in 24 hours. 87.9% of clients report relief after the first day, 12.1% in 2–3 days. NoMoreColds is described as the most effective remedy for colds, sinusitis, and allergies"
+          }
+        },
+        "s4": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/nml-nomore_colds_images_2-min.jpg",
+            "alt": "Collage of satisfied customers using NoMore® Colds red light nasal therapy device for sinus and flu relief, with five-star review calling it a lifesaver during flu season"
+          }
+        },
+        "s5": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/nml-nomore_colds_images_6-_1.jpg",
+            "alt": "Female doctor holding NoMore® red light therapy device. Text reads: Our efforts for your health — redefining wellness with advanced technology, 100% safe and without side effects, guaranteed results by scientific tests"
+          }
+        },
+        "s6": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/nml-nomore_colds_images_7.jpg",
+            "alt": "Woman using NoMore® Colds red light therapy device in her nose, glowing with red light. Text reads: No more struggling with persistent colds, sinusitis or allergies. NoMore® Colds, powered by advanced Red Light Therapy, is a quick and effective solution for relief. Customer review from Danna Rabb highlights no more runny nose after one month of use, with 5-star rating"
+          }
+        },
+        "s7": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/nml-immaginiprodottonomorecolds_8_-min.jpg",
+            "alt": "Real customer results with NoMore® Colds red light nasal therapy device shown in a collage of verified buyers using it for sinus relief and flu prevention"
+          }
+        },
+        "s8": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/nml-nomore_colds_images_3.jpg",
+            "alt": "Before and after results with NoMore® Colds red light nasal therapy device showing customer relief from congestion, featuring testimonial about fast-acting sinus relief"
+          }
+        },
+        "s9": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/nml-nomorecoldspackagingredlighttherapydevicetobeatsinusitisandcolds-433342_11zon-482768.jpg",
+            "alt": "NoMoreColds Red Light Therapy device and packaging. Box text: ‘Get rid of cold quickly this winter.’ Features include: Goodbye Cold, Stop sore throat, Increases defenses, Long battery. Black handheld device with NoMoreColds logo in front"
+          }
+        },
+        "s10": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/nml-50-911483_11zon-727416.jpg",
+            "alt": "NoMoreColds Red Light Therapy bundle with two boxes and device. Packaging text: ‘Get rid of cold quickly this winter.’ Key benefits shown: Goodbye Cold, Stop sore throat, Increases defenses, Long battery"
+          }
+        },
+        "s11": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/nml-52-124301_11zon-866206.jpg",
+            "alt": "NoMoreColds Red Light Therapy 4-pack bundle with device. Packaging highlights: Goodbye Cold, Stop sore throat, Increases defenses, Long battery. Text on box: ‘Get rid of cold quickly this winter"
+          }
+        },
+        "b1": {
+          "type": "bundle",
+          "settings": {
+            "title": "1 Device",
+            "save_label": "SAVE $80.10",
+            "price": "$39.90",
+            "compare_price": "$120.00",
+            "badge": "",
+            "badge_color": "#F32626",
+            "quantity": 1,
+            "selected": false
+          }
+        },
+        "b2": {
+          "type": "bundle",
+          "settings": {
+            "title": "2 Devices",
+            "save_label": "SAVE $180.10",
+            "price": "$29.95",
+            "compare_price": "$120.00",
+            "badge": "MOST POPULAR",
+            "badge_color": "#F32626",
+            "quantity": 2,
+            "selected": true
+          }
+        },
+        "b3": {
+          "type": "bundle",
+          "settings": {
+            "title": "3 Devices",
+            "save_label": "SAVE $280.10",
+            "price": "$26.64",
+            "compare_price": "$120.00",
+            "badge": "BEST VALUE",
+            "badge_color": "#F32626",
+            "quantity": 3,
+            "selected": false
+          }
+        },
+        "g1": {
+          "type": "gift",
+          "settings": {
+            "image": "shopify://shop_images/nml-a-quadrato-2025-10-20t175605.090-min.png",
+            "alt": "Official NoMore App with AI",
+            "label": "Official NoMore App with AI",
+            "value": "$20.00",
+            "locked": false,
+            "unlock_qty": 1
+          }
+        },
+        "g2": {
+          "type": "gift",
+          "settings": {
+            "image": "shopify://shop_images/nml-a-quadrato-2025-10-21t095533.508-min.png",
+            "alt": "Extra Nasal Adapters",
+            "label": "Medical-Grade Silicone Nasal Inserts",
+            "value": "$10.00",
+            "locked": false,
+            "unlock_qty": 2
+          }
+        },
+        "g3": {
+          "type": "gift",
+          "settings": {
+            "alt": "",
+            "label": "",
+            "value": "$15.00",
+            "locked": true,
+            "unlock_qty": 3
+          }
+        },
+        "r1": {
+          "type": "review",
+          "settings": {
+            "image": "shopify://shop_images/nml-progetto_senza_titolo_9_-min.jpg",
+            "alt": "Eric Spear review photo",
+            "name": "Eric Spear",
+            "rating": 5,
+            "text": "Bought a 4 pack to share with the family. Mine works great so far. Already gave them to the family and they love them. Solved my wife's and kid's allergies completely. Best purchase we've made!"
+          }
+        },
+        "r2": {
+          "type": "review",
+          "settings": {
+            "image": "shopify://shop_images/nml-3-min_2.jpg",
+            "alt": "Joyce Simmons review photo",
+            "name": "Joyce Simmons",
+            "rating": 5,
+            "text": "My husband caught a cold driving school buses. He barely used his and got sick, but I used mine regularly and stayed healthy! My son loves it for allergies too. Buying more for family and friends!"
+          }
+        },
+        "r3": {
+          "type": "review",
+          "settings": {
+            "image": "shopify://shop_images/nml-progetto_senza_titolo_10_-min.jpg",
+            "alt": "Kevin Lannoo review photo",
+            "name": "Kevin Lannoo",
+            "rating": 5,
+            "text": "Bought devices for me, my wife, and stepdaughters for Christmas. Tried mine first—felt relief after just 10 min! Wife and girls were skeptical at first, but hopeful it'll help their allergies too."
+          }
+        },
+        "r4": {
+          "type": "review",
+          "settings": {
+            "image": "shopify://shop_images/nml-progetto_senza_titolo_11_-min.jpg",
+            "alt": "Robert Amitrano review photo",
+            "name": "Robert Amitrano",
+            "rating": 5,
+            "text": "Retired physician here. Helped my post-nasal drip a lot! Bought more for my wife and son. Excited to see how it handles winter colds. Highly recommend!"
+          }
+        },
+        "r5": {
+          "type": "review",
+          "settings": {
+            "image": "shopify://shop_images/nml-progetto_senza_titolo_12_-min.jpg",
+            "alt": "Michelle Bloom review photo",
+            "name": "Michelle Bloom",
+            "rating": 5,
+            "text": "Was skeptical at first, but my husband and I tried it after spending lots on sinus meds. After one month, no more Advil! Stayed healthy even when my husband got sick. Great results!"
+          }
+        }
+      },
+      "block_order": [
+        "s1",
+        "s2",
+        "s3",
+        "s4",
+        "s5",
+        "s6",
+        "s7",
+        "s8",
+        "s9",
+        "s10",
+        "s11",
+        "b1",
+        "b2",
+        "b3",
+        "g1",
+        "g2",
+        "g3",
+        "r1",
+        "r2",
+        "r3",
+        "r4",
+        "r5"
+      ]
+    }
+  },
+  "order": [
+    "landing"
+  ]
+}
