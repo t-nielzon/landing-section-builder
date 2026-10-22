@@ -3,40 +3,23 @@
     "landing": {
       "type": "nomore-landing",
       "settings": {
-        "body_font": "figtree_n4",
-        "heading_font": "jost_n7",
-        "accent": "#D60200",
-        "text_color": "#000000",
-        "bg_color": "#F3F3F3",
-        "star_color": "#C80200",
-        "selected_bg": "#FBDCD6",
-        "compare_color": "#D60200",
-        "btn_light": "#FF4E3C",
-        "btn_dark": "#D60200",
-        "btn_shadow": "#B20000",
-        "grad_start": "#C82000",
-        "grad_end": "#FC7E66",
-        "pct_bg": "#FFFFFF",
-        "dot_label": "Slide",
-        "rating_text": "4.66 Based on 1358 reviews",
+        "rating_value": "4.66",
+        "rating_text": "Based on 1358 reviews",
         "title": "NoMore® Colds",
         "subtitle": "Vanquish colds and sinusitis naturally in 24-hour... a liberating, medicine-free revival!!",
         "cure_heading": "WHAT CAN IT CURE?",
         "cure_image": "shopify://shop_images/nml-no_more_colds_67048029-acf2-4046-af7e-a6e219edc698.png",
         "cure_alt": "NoMore® device benefits: No More Sinusitis, No More Colds, No More Allergies, Safe with no side effects",
         "bundles_heading": "BUY MORE - SAVE MORE",
-        "gifts_title": "Free Gifts with your Order",
+        "gifts_heading": "Free Gifts with your Order",
         "gifts_sub": "Unlock selecting a higher Bundle",
-        "free_label": "FREE",
         "locked_label": "Locked",
         "atc_label": "Add to cart",
         "guarantee": "60-DAY MONEY BACK GUARANTEE",
-        "prev_label": "Previous",
-        "next_label": "Next",
-        "story_image": "shopify://shop_images/nml-immagini_prodotto_nomorecolds_4.png",
-        "story_alt": "NoMore® Colds red light therapy device with glowing nasal adapters, offering relief from sore throat, colds, allergies, and sinusitis",
-        "story_heading": "Are you struggling with persistent colds, sinusitis or allergies?",
-        "story_body": "<p>No worries!<strong> NoMore®</strong>, powered by advanced <strong>Red Light Therapy</strong>, is your<strong> quick and effective solution</strong> for <strong>colds and sinusitis relief</strong></p><p><strong>In just 10 minutes a day</strong>, it will:</p><p><strong>🎯 </strong>Target and <strong>alleviate </strong>common<strong> cold and sinusitis symptoms</strong></p><p><strong>❤️ </strong>Promote relaxation and<strong> provide relief</strong></p><p><strong>⚡️ Easy application</strong> on the nasal area</p>",
+        "iwt_image": "shopify://shop_images/nml-immagini_prodotto_nomorecolds_4.png",
+        "iwt_alt": "NoMore® Colds red light therapy device with glowing nasal adapters, offering relief from sore throat, colds, allergies, and sinusitis",
+        "iwt_heading": "Are you struggling with persistent colds, sinusitis or allergies?",
+        "iwt_text": "<p>No worries!<strong> NoMore®</strong>, powered by advanced <strong>Red Light Therapy</strong>, is your<strong> quick and effective solution</strong> for <strong>colds and sinusitis relief</strong></p><p><strong>In just 10 minutes a day</strong>, it will:</p>",
         "pct_value": 100,
         "pct_symbol": "%",
         "pct_text": "Safe solution without side-effects"
@@ -127,7 +110,7 @@
             "price": "$39.90",
             "compare_price": "$120.00",
             "badge": "",
-            "badge_color": "#F32626",
+            "badge_color": "#f32626",
             "quantity": 1,
             "selected": false
           }
@@ -140,7 +123,7 @@
             "price": "$29.95",
             "compare_price": "$120.00",
             "badge": "MOST POPULAR",
-            "badge_color": "#F32626",
+            "badge_color": "#f32626",
             "quantity": 2,
             "selected": true
           }
@@ -153,7 +136,7 @@
             "price": "$26.64",
             "compare_price": "$120.00",
             "badge": "BEST VALUE",
-            "badge_color": "#F32626",
+            "badge_color": "#f32626",
             "quantity": 3,
             "selected": false
           }
@@ -162,8 +145,8 @@
           "type": "gift",
           "settings": {
             "image": "shopify://shop_images/nml-a-quadrato-2025-10-20t175605.090-min.png",
-            "alt": "Official NoMore App with AI",
             "label": "Official NoMore App with AI",
+            "free_label": "FREE",
             "value": "$20.00",
             "locked": false,
             "unlock_qty": 1
@@ -173,18 +156,19 @@
           "type": "gift",
           "settings": {
             "image": "shopify://shop_images/nml-a-quadrato-2025-10-21t095533.508-min.png",
-            "alt": "Extra Nasal Adapters",
             "label": "Medical-Grade Silicone Nasal Inserts",
+            "free_label": "FREE",
             "value": "$10.00",
-            "locked": false,
+            "locked": true,
             "unlock_qty": 2
           }
         },
         "g3": {
           "type": "gift",
           "settings": {
-            "alt": "",
-            "label": "",
+            "image": "shopify://shop_images/nml-a-quadrato_27_-min.png",
+            "label": "Saline Nasal Gel",
+            "free_label": "FREE",
             "value": "$15.00",
             "locked": true,
             "unlock_qty": 3
@@ -239,6 +223,24 @@
             "rating": 5,
             "text": "Was skeptical at first, but my husband and I tried it after spending lots on sinus meds. After one month, no more Advil! Stayed healthy even when my husband got sick. Great results!"
           }
+        },
+        "l1": {
+          "type": "bullet",
+          "settings": {
+            "text": "<p><strong>🎯 </strong>Target and <strong>alleviate </strong>common<strong> cold and sinusitis symptoms</strong></p>"
+          }
+        },
+        "l2": {
+          "type": "bullet",
+          "settings": {
+            "text": "<p><strong>❤️ </strong>Promote relaxation and<strong> provide relief</strong></p>"
+          }
+        },
+        "l3": {
+          "type": "bullet",
+          "settings": {
+            "text": "<p><strong>⚡️ Easy application</strong> on the nasal area</p>"
+          }
         }
       },
       "block_order": [
@@ -263,7 +265,10 @@
         "r2",
         "r3",
         "r4",
-        "r5"
+        "r5",
+        "l1",
+        "l2",
+        "l3"
       ]
     }
   },

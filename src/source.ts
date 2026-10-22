@@ -1,3 +1,4 @@
+import type { Page } from "playwright";
 import { phoneContext, screenshotRange, scrollThrough } from "./browser.ts";
 
 export type SourceNode =
@@ -16,6 +17,15 @@ export interface SourceSection {
   background: string;
   animated: string[];
   nodes: SourceNode[];
+  states?: OptionState[];
+}
+
+// what changes in a section when a choice (bundle, variant, tab) is selected
+export interface OptionState {
+  option: string;
+  shown: string[];
+  hidden: string[];
+  images: string[];
 }
 
 export interface SourceExtract {
@@ -182,6 +192,75 @@ function collect(limit: number) {
   };
 }
 
+// content behind interactions (gifts unlocked by a bigger bundle, per-option prices) is invisible
+// in the default render, so select each option once and record what appears or disappears
+async function captureStates(page: Page, sectionId: string): Promise<OptionState[]> {
+  const snapshot = () =>
+    page.evaluate((id) => {
+      const root = document.getElementById(id)!;
+      const texts = new Set<string>();
+      const images = new Set<string>();
+      for (const el of root.querySelectorAll<HTMLElement>("*")) {
+        if (!el.checkVisibility({ visibilityProperty: true })) continue;
+        const r = el.getBoundingClientRect();
+        if (r.width <= 2 || r.height <= 2) continue;
+        if (el instanceof HTMLImageElement) {
+          const src = el.currentSrc || el.src;
+          if (src && !src.startsWith("data:")) {
+            const url = new URL(src, location.href);
+            url.searchParams.delete("width");
+            url.searchParams.delete("height");
+            images.add(url.href);
+          }
+          continue;
+        }
+        const own = [...el.childNodes].filter((n) => n.nodeType === Node.TEXT_NODE).map((n) => n.textContent ?? "").join(" ").replace(/\s+/g, " ").trim();
+        if (own) texts.add(own);
+      }
+      return { texts: [...texts], images: [...images] };
+    }, sectionId);
+  // only choices a shopper can see and tap; themes also keep hidden variant radios in the dom
+  const options = await page.evaluate((id) => {
+    const radios = [...document.querySelectorAll<HTMLInputElement>(`#${id} input[type="radio"]`)];
+    return radios
+      .map((radio, index) => {
+        let target: HTMLElement = radio.closest("label") ?? radio;
+        while (target.parentElement && !target.innerText.trim()) target = target.parentElement;
+        const r = target.getBoundingClientRect();
+        const visible = target.checkVisibility({ visibilityProperty: true }) && r.width > 20 && r.height > 20;
+        return { index, visible, checked: radio.checked, label: target.innerText.replace(/\s+/g, " ").trim().slice(0, 60) };
+      })
+      .filter((o) => o.visible);
+  }, sectionId);
+  if (options.length < 2 || options.length > 8) return [];
+  const initial = options.find((o) => o.checked)?.index ?? -1;
+  const base = await snapshot();
+  const states: OptionState[] = [];
+  const select = (i: number) =>
+    page.evaluate(
+      ({ id, i }) => {
+        const radio = document.querySelectorAll<HTMLInputElement>(`#${id} input[type="radio"]`)[i];
+        (radio.closest("label") ?? radio).click();
+      },
+      { id: sectionId, i },
+    );
+  for (const { index, label: option } of options) {
+    if (index === initial) continue;
+    await select(index);
+    await page.waitForTimeout(1200);
+    const now = await snapshot();
+    const shown = now.texts.filter((t) => !base.texts.includes(t));
+    const hidden = base.texts.filter((t) => !now.texts.includes(t));
+    const images = now.images.filter((u) => !base.images.includes(u));
+    if (shown.length || hidden.length || images.length) states.push({ option, shown, hidden, images });
+  }
+  if (initial >= 0) {
+    await select(initial);
+    await page.waitForTimeout(800);
+  }
+  return states;
+}
+
 export async function extractSource(url: string, sectionCount = 3): Promise<SourceExtract> {
   const origin = new URL(url).origin;
   // pin the storefront to usd so geo-based currency conversion doesn't leak local prices into the copy
@@ -203,7 +282,11 @@ export async function extractSource(url: string, sectionCount = 3): Promise<Sour
       await page.evaluate((y) => window.scrollTo(0, y), top);
       await page.waitForTimeout(1800);
     }
-    const { styles, sections } = await page.evaluate(collect, sectionCount);
+    const { styles, sections } = (await page.evaluate(collect, sectionCount)) as { styles: SourceExtract["styles"]; sections: SourceSection[] };
+    for (const section of sections) {
+      const states = await captureStates(page, section.sourceId);
+      if (states.length) section.states = states;
+    }
     const screenshots: SourceExtract["screenshots"] = [];
     for (const section of sections) {
       const shots = await screenshotRange(page, section.top, section.height);

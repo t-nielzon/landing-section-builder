@@ -70,14 +70,21 @@ export function buildServer(state: RunState) {
     tools: [
       tool(
         "extract_source",
-        "Load the source product page on a 390px phone viewport and return its first three content sections as structured JSON (text in order with style ids, images, boxes, icons, animations) plus screenshots of each section. Call once at the start.",
+        "Load the source product page on a 390px phone viewport and return its first three content sections as structured JSON (text in order with style ids, images, boxes, icons, animations, and `states`: what appears or disappears when each visible option is selected) plus screenshots of each section. Call once at the start.",
         { url: z.url() },
         async ({ url }) => {
           log.step(`extracting first 3 sections of ${url}`);
           const source = await extractSource(url);
           state.source = source;
           const { screenshots, ...data } = source;
-          const images = [...new Set(source.sections.flatMap((s) => s.nodes.flatMap((n) => (n.t === "img" ? [n.src] : []))))];
+          const images = [
+            ...new Set(
+              source.sections.flatMap((s) => [
+                ...s.nodes.flatMap((n) => (n.t === "img" ? [n.src] : [])),
+                ...(s.states ?? []).flatMap((st) => st.images),
+              ]),
+            ),
+          ];
           log.ok(`found ${source.sections.map((s) => `${s.type} (${s.height}px)`).join(", ")}; ${images.length} images`);
           return {
             content: [

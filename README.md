@@ -20,7 +20,7 @@ The agent runs on `claude-opus-5-5` with every built-in Claude Code tool disable
 
 | Tool | Purpose |
 |-|-|
-| `extract_source` | Loads the page in headless Chromium on an iPhone 13 viewport and finds the first three template sections. Returns structured JSON (text in order with a deduplicated style table, rich text with bold runs, images, boxes, icons, animation hints) plus screenshots of each section. |
+| `extract_source` | Loads the page in headless Chromium on an iPhone 13 viewport and finds the first three template sections. Returns structured JSON (text in order with a deduplicated style table, rich text with bold runs, images, boxes, icons, animation hints) plus screenshots of each section. It also selects each visible option once, such as each bundle, and records what appears or disappears, so hidden content like a gift unlocked by a bigger bundle is captured too. |
 | `upload_images` | Imports the CDN images into Shopify Files (`fileCreate` with `originalSource`) and returns `shopify://shop_images/...` references. Existing files are reused. |
 | `ensure_product` | Upserts a placeholder product by handle (`productSet`) and publishes it to the Online Store. |
 | `write_section` / `edit_section` | Writes the section, or applies exact string edits to it. Each write passes three gates before it is live: local rules, `shopify theme check`, then Shopify's own validation on push. |
