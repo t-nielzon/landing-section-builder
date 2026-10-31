@@ -11,7 +11,11 @@ import { pushFiles, themeCheck, writeLocal } from "./theme.ts";
 import { checkSection, checkTemplate } from "./validate.ts";
 
 // exercises every tool against the real store without the model, so plumbing bugs cost nothing
-const url = process.argv[2] || "https://try-nomore.com/products/nomorecolds-red-light-therapy-colds-sinusitis";
+const url = process.argv[2];
+if (!url) {
+  console.error("usage: npm run smoke -- <product page url>");
+  process.exit(1);
+}
 const dir = path.resolve("runs", "smoke", "theme");
 await mkdir(dir, { recursive: true });
 const assert = (cond: unknown, msg: string) => {

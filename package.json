@@ -9,7 +9,7 @@
     "smoke": "tsx --env-file=.env src/smoke.ts",
     "typecheck": "tsc -p ."
   },
-  "license": "UNLICENSED",
+  "license": "MIT",
   "type": "module",
   "private": "true",
   "dependencies": {

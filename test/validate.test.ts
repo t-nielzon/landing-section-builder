@@ -54,7 +54,7 @@ test("rejects image settings that are not image pickers", () => {
 const template = {
   sections: {
     landing: {
-      type: "nomore-landing",
+      type: "landing-section",
       settings: { heading: "Hello", hero_image: "shopify://shop_images/a.png", body: "<p>Copy</p>" },
       blocks: { s1: { type: "slide", settings: { image: "shopify://shop_images/b.png" } } },
       block_order: ["s1"],
@@ -64,7 +64,7 @@ const template = {
 };
 
 test("accepts a template that matches the schema", () => {
-  assert.deepEqual(checkTemplate(template, schema, "nomore-landing").errors, []);
+  assert.deepEqual(checkTemplate(template, schema, "landing-section").errors, []);
 });
 
 test("rejects unknown settings, raw image urls and bad block order", () => {
@@ -72,7 +72,7 @@ test("rejects unknown settings, raw image urls and bad block order", () => {
   bad.sections.landing.settings.hero_image = "https://cdn.example.com/a.png";
   (bad.sections.landing.settings as Record<string, unknown>).subtitle = "x";
   bad.sections.landing.block_order = [];
-  const errors = checkTemplate(bad, schema, "nomore-landing").errors.join();
+  const errors = checkTemplate(bad, schema, "landing-section").errors.join();
   assert.match(errors, /must reference an uploaded file/);
   assert.match(errors, /"subtitle" is not defined/);
   assert.match(errors, /block_order/);

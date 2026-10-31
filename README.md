@@ -3,16 +3,24 @@
 A Claude Agent SDK script that takes a Shopify product page URL and rebuilds the first three sections of that landing page as **one editable Liquid section** in your own Shopify theme. It is tuned for mobile fidelity.
 
 ```bash
-npm start -- https://try-nomore.com/products/nomorecolds-red-light-therapy-colds-sinusitis
+npm start -- https://example-store.com/products/<handle>
 ```
 
 At the end of a run you get:
 
-- `sections/nomore-landing.liquid`, pushed to the live theme. Every text, image, colour and repeating item in it is a theme editor setting or block.
-- `templates/product.nomore-landing.json`, which holds this one section filled with the source content. All images are imported into the store's Files, so they can be swapped with the normal image picker.
+- `sections/landing-section.liquid`, pushed to the live theme. Every text, image, colour and repeating item in it is a theme editor setting or block.
+- `templates/product.landing-section.json`, which holds this one section filled with the source content. All images are imported into the store's Files, so they can be swapped with the normal image picker.
 - A placeholder product, published and assigned to that template.
 - The storefront URL, the theme editor URL and the measured API cost, printed to the terminal.
-- A copy of the generated files in `runs/<timestamp>/theme/`. `examples/try-nomore/` holds the output of one full run.
+- A copy of the generated files in `runs/<timestamp>/theme/`.
+
+## Requirements
+
+- Node 22 or later (`engines` in `package.json`).
+- An Anthropic API key (`ANTHROPIC_API_KEY`). The agent runs on the Claude Agent SDK and costs money per run.
+- A Shopify development store and a Dev Dashboard app with the Admin API scopes listed under Setup.
+- Shopify CLI, installed as a dev dependency. It runs `shopify theme check` and `shopify theme push`.
+- Playwright Chromium, installed in Setup.
 
 ## How it works
 
@@ -80,12 +88,27 @@ Node 22 or later is required.
 |-|-|
 | `npm start -- <url>` | Run the agent |
 | `npm run reset` | Remove the section, template, placeholder product and imported files, for a clean rerun |
-| `npm run smoke` | Exercise every tool against the store without the model (no API cost) |
+| `npm run smoke -- <url>` | Exercise every tool against the store without the model (no API cost) |
 | `npm test` | Validator unit tests |
 | `npm run typecheck` | `tsc --noEmit` |
+
+## Limitations
+
+- Only the first three template sections of the source page are rebuilt.
+- Pages that need a login, block headless browsers, or render most content late may not extract cleanly.
+- It targets a phone viewport. Desktop layout is a centred column, not a rebuilt desktop design.
+- Output quality depends on the model and the source page, so review the result in the theme editor.
 
 ## Notes
 
 - **Viewport:** the target is a 390px phone viewport. On wider screens the section stays a centred column.
 - **Placeholder product:** it has a single variant. The bundle picker adds the chosen bundle's quantity of that variant to the cart, so there are no real bundle variants or prices behind it.
 - **Images with text baked in:** some source images contain text drawn into the picture, such as the hero slides. They are imported as images, as the source does.
+
+## Use responsibly
+
+Only rebuild pages you own or have permission to reproduce, and respect the terms of the sites you read. Images are imported into your own store's Files, so make sure you have the right to use them.
+
+## License
+
+MIT. See [LICENSE](LICENSE).

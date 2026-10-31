@@ -20,7 +20,7 @@ export const config = {
   get storefrontPassword() {
     return process.env.STOREFRONT_PASSWORD || "";
   },
-  sectionName: "nomore-landing",
-  templateSuffix: "nomore-landing",
-  productHandle: "nomore-landing-demo",
+  sectionName: "landing-section",
+  templateSuffix: "landing-section",
+  productHandle: "landing-section-demo",
 };

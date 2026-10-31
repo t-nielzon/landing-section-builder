@@ -5,13 +5,16 @@ import { closeBrowser } from "./browser.ts";
 import { log } from "./log.ts";
 import { buildServer, links, readPrompt, type RunState } from "./tools.ts";
 
-const DEFAULT_URL = "https://try-nomore.com/products/nomorecolds-red-light-therapy-colds-sinusitis";
 const MODEL = process.env.MODEL || "claude-opus-5-5";
 const MAX_TURNS = Number(process.env.MAX_TURNS || 40);
 const MAX_BUDGET_USD = Number(process.env.MAX_BUDGET_USD || 2);
 const MAX_SECTION_WRITES = 8;
 
-const url = process.argv[2] || DEFAULT_URL;
+const url = process.argv[2];
+if (!url) {
+  console.error("usage: npm start -- <product page url>");
+  process.exit(1);
+}
 const runId = new Date().toISOString().replace(/[:.]/g, "-");
 const state: RunState = { themeDir: path.resolve("runs", runId, "theme"), templateWritten: false, renders: 0 };
 await mkdir(state.themeDir, { recursive: true });
